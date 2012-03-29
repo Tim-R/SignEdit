@@ -1,0 +1,7 @@
+#Eclipse files
+/.classpath
+/.project
+/.settings
+
+#Nobody wants the .class files, anyway
+/bin
