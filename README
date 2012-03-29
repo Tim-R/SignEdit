@@ -1,0 +1,12 @@
+SignEdit: A Bukkit plugin which allows signs to be easily edited while still on the wall/block they were placed on
+
+Commands:
+    - /signedit <line> delete - Deletes the contents of <line>
+    - /signedit <line> <text> - Change the text on <line> to match that in <text>
+    - /signedit cancel - Cancel the current edit
+    
+Changelog:
+    1.0: Initial release
+    
+Feaures:
+    - LWC Integration.. If the sign doesn't belong to you, you can't change it.
