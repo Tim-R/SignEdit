@@ -126,6 +126,7 @@ public class SignEdit extends JavaPlugin {
 		lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		if(lwcPlugin != null) {
 			lwc = ((LWCPlugin) lwcPlugin).getLWC();
+			log.info("[SignEdit] LWC found. Will check for protections");
 		} else {
 			log.severe("[SignEdit] LWC not found, disabling SignEdit");
 			getServer().getPluginManager().disablePlugin(this);

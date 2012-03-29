@@ -48,6 +48,7 @@ public class SignEditPlayerListener implements Listener {
 							event.getPlayer().sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
 						}
 					} else {
+						plugin.playerLines.remove(event.getPlayer());
 						event.getPlayer().sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to edit that sign!");
 					}
 				}
