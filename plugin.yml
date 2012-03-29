@@ -1,0 +1,16 @@
+name: SignEdit
+version: 1.0
+description: Ever made a mistake on a sign, and not wanted to remove it? Now you don't have to!
+author: Timr
+website: http://dev.timroden.net/signedit
+main: net.timroden.signedit.SignEdit
+database: false
+
+commands:
+    signedit:
+        description: Edit a line on a sign
+        permission: signedit.edit
+
+permissions:
+    signedit.edit:
+        description: Allows you to use /signedit
