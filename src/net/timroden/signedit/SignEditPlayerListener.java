@@ -4,6 +4,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
@@ -32,6 +33,9 @@ public class SignEditPlayerListener implements Listener {
 				if(plugin.playerLines.containsKey(event.getPlayer())) {
 					if(plugin.getConfig().getBoolean("signedit.uselwc") == true) {
 						canAccess = plugin.performLWCCheck(event.getPlayer(), plugin.lwc.findProtection(event.getClickedBlock()));
+					}
+					if(event.getPlayer().getGameMode().equals(GameMode.CREATIVE) && plugin.getConfig().getBoolean("signedit.ignorecreative") == true) {
+						event.setCancelled(true);
 					}
 					if(canAccess == true) {
 						line = (Integer.parseInt(playerLinesArray[0]) - 1);

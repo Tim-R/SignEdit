@@ -19,7 +19,7 @@ public class SignEdit extends JavaPlugin {
 	Plugin lwcPlugin;
 	LWC lwc;
 	
-	public String chatPrefix = "[" + ChatColor.GREEN + "SignEdit" + ChatColor.WHITE + "] ";
+	public String chatPrefix = "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
 	public HashMap<Player, String[]> playerLines = new HashMap<Player, String[]>();
 
 	public SignEditPlayerListener pl = new SignEditPlayerListener(this);
@@ -64,8 +64,22 @@ public class SignEdit extends JavaPlugin {
 								return true;
 							}
 						}
+						if(args[0].equalsIgnoreCase("help") && args.length == 1) {
+							player.sendMessage(chatPrefix + ChatColor.GREEN + "Available commands:");
+							player.sendMessage(ChatColor.GRAY + "    - /signedit cancel - Cancels any pending SignEdit requests");
+							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> <text> - Changes the text on <line> to <text> (<line> must be 1,2,3, or 4)");
+							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> delete - Deletes the text on <line> (<line> must be 1,2,3 or 4)");
+							player.sendMessage(ChatColor.GRAY + "    - /signedit help - Display this help dialogue");
+							return true;
+						}
 						if(!playerLines.containsKey(player)) {
 							if(args.length >= 2) {
+								try {
+									Integer.parseInt(args[0]);
+								} catch(NumberFormatException ex) {
+									player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a number. Please enter a valid line number (1,2,3 or 4)");
+									return true;
+								}
 								if(args[1].equalsIgnoreCase("delete") && args.length == 2) {
 									String[] toPut = new String[2];
 									toPut[0] = args[0];
@@ -86,7 +100,7 @@ public class SignEdit extends JavaPlugin {
 									player.sendMessage(chatPrefix + ChatColor.RED + "The most characters a line can hold is 15. Your text was " + line.length() + " characters.");
 								}
 							} else {
-								player.sendMessage(chatPrefix + ChatColor.RED + "Usage: /signedit <line|cancel> [delete|text]");
+								player.sendMessage(chatPrefix + ChatColor.RED + "For usage information on this command, type /signedit help");
 								return true;
 							}
 						} else {
@@ -94,7 +108,7 @@ public class SignEdit extends JavaPlugin {
 							return true;
 						}
 					} else {
-						player.sendMessage(chatPrefix + ChatColor.RED + "Usage: /signedit <line|cancel> [delete|text]");
+						player.sendMessage(chatPrefix + ChatColor.RED + "For usage information on this command, type /signedit help");
 						return true;
 					}
 				} else {
@@ -104,6 +118,7 @@ public class SignEdit extends JavaPlugin {
 			}
 		} else {
 			sender.sendMessage(chatPrefix + ChatColor.RED + "This command can only be initiated by a player.");
+			return true;
 		}
 		return false;		
 	}

@@ -1,2 +1,6 @@
 signedit:
+    #Check with LWC to make sure the player can access the sign they are trying to edit
     uselwc: false
+    
+    #If the player is in creative mode, ignore it and update the sign
+    ignorecreative: true
