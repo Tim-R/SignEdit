@@ -77,7 +77,7 @@ public class SignEdit extends JavaPlugin {
 								try {
 									Integer.parseInt(args[0]);
 								} catch(NumberFormatException ex) {
-									player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a number. Please enter a valid line number (1,2,3 or 4)");
+									player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a number. Please enter a valid line number. (1,2,3 or 4)");
 									return true;
 								}
 								if(args[1].equalsIgnoreCase("delete") && args.length == 2) {
@@ -98,7 +98,7 @@ public class SignEdit extends JavaPlugin {
 									return true;
 								} else {
 									player.sendMessage(chatPrefix + ChatColor.RED + "The most characters a line can hold is 15. Your text was " + line.length() + " characters.");
-								}
+								}	
 							} else {
 								player.sendMessage(chatPrefix + ChatColor.RED + "For usage information on this command, type /signedit help");
 								return true;
