@@ -44,15 +44,13 @@ public class SignEditPlayerListener implements Listener {
 						changetext = playerLinesArray[1];
 						if(changetext == "DELETE_LINE_PLAYER_COMMAND") {
 							sign.setLine(line, "");
-							sign.update();
-							plugin.playerLines.remove(p);
 							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line deleted.");
 						} else {
 							sign.setLine(line, changetext);
-							sign.update();
-							plugin.playerLines.remove(p);
 							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
 						}
+						sign.update();
+						plugin.playerLines.remove(p);
 					} else {
 						plugin.playerLines.remove(p);
 						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to edit that sign!");
