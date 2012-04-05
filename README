@@ -12,3 +12,7 @@ Changelog:
     
 Feaures:
     - LWC Integration.. If the sign doesn't belong to you, you can't change it.
+
+
+TODO: 
+    - Add a command to view previous edits performed on signs (People, time, what was edited)
