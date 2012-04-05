@@ -51,7 +51,7 @@ public class SignEdit extends JavaPlugin {
 		
 		if(sender instanceof Player) {
 			player = (Player) sender;
-		}		
+		}
 		
 		if(player != null) {
 			if(cmd.getName().equalsIgnoreCase("signedit")) {
@@ -67,11 +67,29 @@ public class SignEdit extends JavaPlugin {
 								return true;
 							}
 						}
+						if(args[0].equalsIgnoreCase("delete") && args.length == 2) {
+							if(!playerLines.containsKey(player)) {
+								try {
+									Integer.parseInt(args[1]);
+								} catch(NumberFormatException ex) {
+									player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[1] + "\" is not a number. Please enter a valid line number. (1,2,3 or 4)");
+									return true;
+								}
+								if(Integer.parseInt(args[0]) > 4) {
+									args[0] = Integer.toString(4);
+								}
+								toPut[0] = args[1];
+								toPut[1] = "DELETE_LINE_PLAYER_COMMAND";
+								playerLines.put(player, toPut);
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "Left click a sign to delete the line.");
+								return true;
+							}
+						}
 						if(args[0].equalsIgnoreCase("help") && args.length == 1) {
 							player.sendMessage(chatPrefix + ChatColor.GREEN + "Available commands:");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit cancel - Cancels any pending SignEdit requests");
-							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> <text> - Changes the text on <line> to <text> (<line> must be 1,2,3, or 4)");
-							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> delete - Deletes the text on <line> (<line> must be 1,2,3 or 4)");
+							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
+							player.sendMessage(ChatColor.GRAY + "    - /signedit delete <line> - Deletes the text on the specified line.");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit help - Display this help dialogue");
 							return true;
 						}
@@ -85,13 +103,6 @@ public class SignEdit extends JavaPlugin {
 								}
 								if(Integer.parseInt(args[0]) > 4) {
 									args[0] = Integer.toString(4);
-								}
-								if(args[1].equalsIgnoreCase("delete") && args.length == 2) {
-									toPut[0] = args[0];
-									toPut[1] = "delete";									
-									playerLines.put(player, toPut);
-									player.sendMessage(chatPrefix + ChatColor.GREEN + "Left click a sign to complete your changes.");
-									return true;
 								}
 								line = implodeArray(args, " ", 1, args.length);
 								if(line.length() <= 15) {
