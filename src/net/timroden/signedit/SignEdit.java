@@ -19,7 +19,7 @@ public class SignEdit extends JavaPlugin {
 	Plugin lwcPlugin;
 	LWC lwc;
 	
-	public String chatPrefix = "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
+	public String chatPrefix = ChatColor.WHITE + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
 	public HashMap<Player, String[]> playerLines = new HashMap<Player, String[]>();
 
 	public SignEditPlayerListener pl = new SignEditPlayerListener(this);
@@ -47,9 +47,12 @@ public class SignEdit extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		Player player = null;
 		String line = null;
+		String[] toPut = new String[2];
+		
 		if(sender instanceof Player) {
 			player = (Player) sender;
 		}		
+		
 		if(player != null) {
 			if(cmd.getName().equalsIgnoreCase("signedit")) {
 				if(player.hasPermission("signedit.edit")) {
@@ -80,8 +83,10 @@ public class SignEdit extends JavaPlugin {
 									player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a number. Please enter a valid line number. (1,2,3 or 4)");
 									return true;
 								}
+								if(Integer.parseInt(args[0]) > 4) {
+									args[0] = Integer.toString(4);
+								}
 								if(args[1].equalsIgnoreCase("delete") && args.length == 2) {
-									String[] toPut = new String[2];
 									toPut[0] = args[0];
 									toPut[1] = "delete";									
 									playerLines.put(player, toPut);
@@ -90,7 +95,6 @@ public class SignEdit extends JavaPlugin {
 								}
 								line = implodeArray(args, " ", 1, args.length);
 								if(line.length() <= 15) {
-									String[] toPut = new String[2];
 									toPut[0] = args[0];
 									toPut[1] = line;
 									playerLines.put(player, toPut);
@@ -98,6 +102,7 @@ public class SignEdit extends JavaPlugin {
 									return true;
 								} else {
 									player.sendMessage(chatPrefix + ChatColor.RED + "The most characters a line can hold is 15. Your text was " + line.length() + " characters.");
+									return true;
 								}	
 							} else {
 								player.sendMessage(chatPrefix + ChatColor.RED + "For usage information on this command, type /signedit help");
@@ -124,17 +129,15 @@ public class SignEdit extends JavaPlugin {
 	}
 	
 	public static String implodeArray(String[] inputArray, String glueString, int start, int end) {
-		String output = "";
+		StringBuilder sb = new StringBuilder();
 		if (inputArray.length > 0) {
-			StringBuilder sb = new StringBuilder();
 			sb.append(inputArray[start]);
 			for (int i = (start + 1); i<inputArray.length; i++) {
 				sb.append(glueString);
 				sb.append(inputArray[i]);
 			}
-			output = sb.toString();
 		}
-		return output;
+		return sb.toString();
 	}
 	
 	public void findLWC() {

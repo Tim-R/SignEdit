@@ -1,5 +1,6 @@
 package net.timroden.signedit;
 
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -24,17 +25,18 @@ public class SignEditPlayerListener implements Listener {
 	
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
+		Player p = event.getPlayer();
 		boolean canAccess = true;
-		playerLinesArray = plugin.playerLines.get(event.getPlayer());
+		playerLinesArray = plugin.playerLines.get(p);
 		if((event.getClickedBlock() != null) && (event.getClickedBlock().getType().equals(Material.SIGN) || event.getClickedBlock().getType().equals(Material.SIGN_POST) || event.getClickedBlock().getType().equals(Material.WALL_SIGN) )) {
 			BlockState gs = event.getClickedBlock().getState();
 			Sign sign = (Sign) gs;
 			if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-				if(plugin.playerLines.containsKey(event.getPlayer())) {
+				if(plugin.playerLines.containsKey(p)) {
 					if(plugin.getConfig().getBoolean("signedit.uselwc") == true) {
-						canAccess = plugin.performLWCCheck(event.getPlayer(), plugin.lwc.findProtection(event.getClickedBlock()));
+						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
 					}
-					if(event.getPlayer().getGameMode().equals(GameMode.CREATIVE) && plugin.getConfig().getBoolean("signedit.ignorecreative") == true) {
+					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.getConfig().getBoolean("signedit.ignorecreative") == true) {
 						event.setCancelled(true);
 					}
 					if(canAccess == true) {
@@ -43,17 +45,17 @@ public class SignEditPlayerListener implements Listener {
 						if(changetext == "delete") {
 							sign.setLine(line, "");
 							sign.update();
-							plugin.playerLines.remove(event.getPlayer());
-							event.getPlayer().sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line deleted.");
+							plugin.playerLines.remove(p);
+							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line deleted.");
 						} else {
 							sign.setLine(line, changetext);
 							sign.update();
-							plugin.playerLines.remove(event.getPlayer());
-							event.getPlayer().sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
+							plugin.playerLines.remove(p);
+							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
 						}
 					} else {
-						plugin.playerLines.remove(event.getPlayer());
-						event.getPlayer().sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to edit that sign!");
+						plugin.playerLines.remove(p);
+						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to edit that sign!");
 					}
 				}
 			}
