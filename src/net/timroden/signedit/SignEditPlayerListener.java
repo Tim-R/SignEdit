@@ -39,7 +39,7 @@ public class SignEditPlayerListener implements Listener {
 					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.getConfig().getBoolean("signedit.ignorecreative") == true) {
 						event.setCancelled(true);
 					}
-					if(canAccess == true) {
+					if(canAccess == true || p.hasPermission("signedit.override")) {
 						line = (Integer.parseInt(playerLinesArray[0]) - 1);
 						changetext = playerLinesArray[1];
 						if(changetext == "DELETE_LINE_PLAYER_COMMAND") {
