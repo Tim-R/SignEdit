@@ -11,10 +11,12 @@ Permissions:
     - signedit.override - Allows users (defaults to OPs) to protection
     
 Change log:
+    1.2.1: Fix an issue with /signedit delete present since version 1.0.2
+    1.2: Handle configs in a different way, add a verbose mode so that all changes/deletions will be logged to console.
     1.1: Minor code cleanups, simplify README, prep for BukkitDev release
-    1.0.3b: Add a permission to override LWC's protections
-    1.0.2b: Change the commands around a bit, you can now type "delete" on a line
-    1.0.1b: Add a configuration directive to ignore creative mode if a player has a pending SignEdit request, check to make sure the <line> parameter is an integer (1-4), add a help dialogue
+    1.0.3: Add a permission to override LWC's protections
+    1.0.2: Change the commands around a bit, you can now type "delete" on a line
+    1.0.1: Add a configuration directive to ignore creative mode if a player has a pending SignEdit request, check to make sure the <line> parameter is an integer (1-4), add a help dialogue
     1.0: Initial release
     
 Features:

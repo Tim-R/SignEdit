@@ -89,8 +89,8 @@ public class SignEdit extends JavaPlugin {
 									player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[1] + "\" is not a number. Please enter a valid line number. (1,2,3 or 4)");
 									return true;
 								}
-								if(Integer.parseInt(args[0]) > 4) {
-									args[0] = Integer.toString(4);
+								if(Integer.parseInt(args[1]) > 4) {
+									args[1] = Integer.toString(4);
 								}
 								toPut[0] = args[1];
 								toPut[1] = "DELETE_LINE_PLAYER_COMMAND";
