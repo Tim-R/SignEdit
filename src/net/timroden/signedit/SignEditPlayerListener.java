@@ -2,6 +2,7 @@ package net.timroden.signedit;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.ChatColor;
@@ -23,7 +24,7 @@ public class SignEditPlayerListener implements Listener {
 		this.plugin = parent;
 	}
 	
-	@EventHandler
+	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player p = event.getPlayer();
 		boolean canAccess = true;
@@ -43,12 +44,14 @@ public class SignEditPlayerListener implements Listener {
 						line = (Integer.parseInt(playerLinesArray[0]) - 1);
 						changetext = playerLinesArray[1];
 						if(changetext == "DELETE_LINE_PLAYER_COMMAND") {
+							changetext = "";
 							sign.setLine(line, "");
 							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line deleted.");
 						} else {
 							sign.setLine(line, changetext);
 							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
 						}
+						plugin.log.info("[SignEdit] Sign Change: " + p.getName() + " changed sign at x:" + p.getLocation().getX() + " y:" + p.getLocation().getY() + " z:" + p.getLocation().getZ() + " in world " + p.getWorld().getName() + "; Line " + line + " changed to \"" + changetext + "\"");
 						sign.update();
 						plugin.playerLines.remove(p);
 					} else {
