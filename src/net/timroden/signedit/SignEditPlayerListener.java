@@ -59,8 +59,7 @@ public class SignEditPlayerListener implements Listener {
 					if(canAccess == true || p.hasPermission("signedit.override")) {
 						line = (Integer.parseInt(playerLinesArray[0]) - 1);
 						changetext = playerLinesArray[1];
-						if(changetext == null) {
-							changetext = "";
+						if(changetext == "") {
 							sign.setLine(line, "");
 							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line deleted.");
 						} else {

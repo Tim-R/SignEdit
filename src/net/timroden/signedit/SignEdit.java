@@ -25,7 +25,7 @@ import com.griefcraft.model.Protection;
 
 public class SignEdit extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
-	
+		
 	/* Variables for logging to our log file */
 	public File logFile = null;
 	public FileWriter fstream = null;
@@ -85,7 +85,7 @@ public class SignEdit extends JavaPlugin {
 	
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		Player player = null;
-		String line = null;
+		String line = "";
 		String[] toPut = new String[2];
 		if(sender instanceof Player) {
 			player = (Player) sender;
@@ -104,36 +104,16 @@ public class SignEdit extends JavaPlugin {
 								return true;
 							}
 						}
-						if(args[0].equalsIgnoreCase("delete") && args.length == 2) {
-							if(!playerLines.containsKey(player)) {
-								try {
-									Integer.parseInt(args[1]);
-								} catch(NumberFormatException ex) {
-									player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[1] + "\" is not a number. Please enter a valid line number. (1,2,3 or 4)");
-									return true;
-								}
-								if(Integer.parseInt(args[1]) > 4) {
-									player.sendMessage(chatPrefix + "\"" + args[1] + "\" isn't a valid line number! Please enter a valid line number (1,2,3 or 4)");
-									return true;
-								}
-								toPut[0] = args[1];
-								toPut[1] = null;
-								playerLines.put(player, toPut);
-								player.sendMessage(chatPrefix + ChatColor.GREEN + "Left click a sign to delete the line.");
-								return true;
-							}
-						}
 						if(args[0].equalsIgnoreCase("help") && args.length == 1) {
 							player.sendMessage(chatPrefix + ChatColor.GREEN + "Available commands:");
 							player.sendMessage(chatPrefix + ChatColor.GRAY + "When altering your signs, left click to apply changes.");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit cancel - Cancels any pending SignEdit requests");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
-							player.sendMessage(ChatColor.GRAY + "    - /signedit delete <line> - Deletes the text on the specified line.");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit help - Display this help dialogue");
 							return true;
 						}
 						if(!playerLines.containsKey(player)) {
-							if(args.length >= 2) {
+							if(args.length >= 1) {
 								try {
 									Integer.parseInt(args[0]);
 								} catch(NumberFormatException ex) {
@@ -144,7 +124,9 @@ public class SignEdit extends JavaPlugin {
 									player.sendMessage(chatPrefix + "\"" + args[0] + "\" isn't a valid line number! Please enter a valid line number (1,2,3 or 4)");
 									return true;
 								}
-								line = implodeArray(args, " ", 1, args.length);
+								if(args.length >= 2) {
+									line = implodeArray(args, " ", 1, args.length);
+								}
 								if(line.length() <= 15) {
 									toPut[0] = args[0];
 									toPut[1] = line;

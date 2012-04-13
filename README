@@ -2,7 +2,6 @@ SignEdit: A Bukkit plugin which allows signs to be easily edited while still on 
 
 Commands:
     - /signedit <line> <text> - Change the text on <line> to match that in <text>
-    - /signedit delete <line> - Remove the text on the specified line
     - /signedit cancel - Cancel the current edit
     - /signedit help - Display a help dialogue
 
@@ -11,6 +10,7 @@ Permissions:
     - signedit.override - Allows users (defaults to OPs) to protection
     
 Change log:
+    1.4: Remove /signedit delete, to delete lines type /signedit <line>
     1.3: Add new config options, SignEdit can now log to a file
     1.2.1: Fix an issue with /signedit delete present since version 1.0.2
     1.2: Handle configs in a different way, add a verbose mode so that all changes/deletions will be logged to console.
