@@ -1,7 +1,9 @@
 package net.timroden.signedit;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -23,16 +25,29 @@ import com.griefcraft.model.Protection;
 
 public class SignEdit extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
+	
+	/* Variables for logging to our log file */
+	public File logFile = null;
+	public FileWriter fstream = null;
+	public BufferedWriter fileOutput = null;
+	
+	/* Variables for LWC integration */
 	Plugin lwcPlugin;
 	LWC lwc;
 	
-	public String chatPrefix = ChatColor.WHITE + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
+	/* Prefix to show users in chat when they perform any SignEdit commands */
+	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
+	
+	/* Main data HashMap, stores all pending SignEdit "jobs" for a specific player */
 	public HashMap<Player, String[]> playerLines = new HashMap<Player, String[]>();
 
+	/* Initialize our listener */
 	public SignEditPlayerListener pl = new SignEditPlayerListener(this);
 	
+	/* Variables for dealing with Plugin Configuration files */
 	File configFile;
 	FileConfiguration config;
+	
 	@Override
 	public void onEnable() {
 		Long st = System.currentTimeMillis();
@@ -44,17 +59,27 @@ public class SignEdit extends JavaPlugin {
 	    }
 		config = new YamlConfiguration();
 		loadCfg();
-		if(getConfig().getBoolean("signedit.uselwc") == true) {
+		if(config.getBoolean("signedit.uselwc") == true) {
 			findLWC();
 		}
+		if(config.getBoolean("signedit.log.enabled") == true) {
+			openFileOutput();
+		}
+		
 		getServer().getPluginManager().registerEvents(this.pl, this);
 
 		log.info("[SignEdit] SignEdit enabled successfully! (" + (System.currentTimeMillis() - st) + " ms)");
 	}
-	
+
 	@Override
 	public void onDisable() {
-		saveCfg();
+		if(config.getBoolean("signedit.log.enabled") == true) {
+			try {
+				fileOutput.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		log.info("[SignEdit] SignEdit disabled successfully.");
 	}
 	
@@ -62,11 +87,9 @@ public class SignEdit extends JavaPlugin {
 		Player player = null;
 		String line = null;
 		String[] toPut = new String[2];
-		
 		if(sender instanceof Player) {
 			player = (Player) sender;
-		}
-		
+		}		
 		if(player != null) {
 			if(cmd.getName().equalsIgnoreCase("signedit")) {
 				if(player.hasPermission("signedit.edit")) {
@@ -93,7 +116,7 @@ public class SignEdit extends JavaPlugin {
 									args[1] = Integer.toString(4);
 								}
 								toPut[0] = args[1];
-								toPut[1] = "DELETE_LINE_PLAYER_COMMAND";
+								toPut[1] = null;
 								playerLines.put(player, toPut);
 								player.sendMessage(chatPrefix + ChatColor.GREEN + "Left click a sign to delete the line.");
 								return true;
@@ -101,6 +124,7 @@ public class SignEdit extends JavaPlugin {
 						}
 						if(args[0].equalsIgnoreCase("help") && args.length == 1) {
 							player.sendMessage(chatPrefix + ChatColor.GREEN + "Available commands:");
+							player.sendMessage(chatPrefix + ChatColor.GRAY + "When altering your signs, left click to apply changes.");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit cancel - Cancels any pending SignEdit requests");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit delete <line> - Deletes the text on the specified line.");
@@ -152,7 +176,6 @@ public class SignEdit extends JavaPlugin {
 		}
 		return false;		
 	}
-	
 	public static String implodeArray(String[] inputArray, String glueString, int start, int end) {
 		StringBuilder sb = new StringBuilder();
 		if (inputArray.length > 0) {
@@ -164,7 +187,18 @@ public class SignEdit extends JavaPlugin {
 		}
 		return sb.toString();
 	}
-	
+	public void openFileOutput() {
+		try	{
+			logFile = new File(getDataFolder(), config.getString("signedit.log.filename"));
+			if(!logFile.exists()){
+				logFile.createNewFile();
+			}		
+			fstream = new FileWriter(getDataFolder() + System.getProperty("file.separator") + config.getString("signedit.log.filename"), true);
+			fileOutput = new BufferedWriter(fstream);
+		} catch (IOException e){
+			e.printStackTrace();
+		}
+	}
 	public void findLWC() {
 		lwcPlugin = getServer().getPluginManager().getPlugin("LWC");
 		if(lwcPlugin != null) {
@@ -175,21 +209,18 @@ public class SignEdit extends JavaPlugin {
 			getServer().getPluginManager().disablePlugin(this);
 		}
 	}
-	
 	public boolean performLWCCheck(Player player, Protection protection) {
 		if(lwc.canAccessProtection(player, protection)) {
 			return true;
 		}		
 		return false;
 	}
-	
 	private void firstRun() throws Exception {
 	    if(!configFile.exists()){
 	        configFile.getParentFile().mkdirs();
 	        copy(getResource("config.yml"), configFile);
 	    }
 	}
-	
 	private void copy(InputStream in, File file) {
 	    try {
 	        OutputStream out = new FileOutputStream(file);
@@ -204,7 +235,6 @@ public class SignEdit extends JavaPlugin {
 	        e.printStackTrace();
 	    }
 	}
-	
 	public void saveCfg() {
 	    try {
 	        config.save(configFile);

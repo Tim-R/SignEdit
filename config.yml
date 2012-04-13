@@ -4,3 +4,13 @@ signedit:
     
     #If the player is in creative mode, ignore it and update the sign
     ignorecreative: true
+    
+    #Logging options
+    log:
+        #Set enabled to true if you want all transactions to be logged to file
+        #If false, SignEdit will log everything to Console
+        #If true, SignEdit will log to a file instead of Console
+        enabled: false
+        
+        #Name of the file that SignEdit will log to
+        filename: signedit.log
