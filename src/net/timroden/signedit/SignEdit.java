@@ -113,7 +113,8 @@ public class SignEdit extends JavaPlugin {
 									return true;
 								}
 								if(Integer.parseInt(args[1]) > 4) {
-									args[1] = Integer.toString(4);
+									player.sendMessage(chatPrefix + "\"" + args[1] + "\" isn't a valid line number! Please enter a valid line number (1,2,3 or 4)");
+									return true;
 								}
 								toPut[0] = args[1];
 								toPut[1] = null;
@@ -140,7 +141,8 @@ public class SignEdit extends JavaPlugin {
 									return true;
 								}
 								if(Integer.parseInt(args[0]) > 4) {
-									args[0] = Integer.toString(4);
+									player.sendMessage(chatPrefix + "\"" + args[0] + "\" isn't a valid line number! Please enter a valid line number (1,2,3 or 4)");
+									return true;
 								}
 								line = implodeArray(args, " ", 1, args.length);
 								if(line.length() <= 15) {
