@@ -109,6 +109,7 @@ public class SignEdit extends JavaPlugin {
 							player.sendMessage(chatPrefix + ChatColor.GRAY + "When altering your signs, left click to apply changes.");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit cancel - Cancels any pending SignEdit requests");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
+							player.sendMessage(ChatColor.GRAY + "	 - /signedit history [page]");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit help - Display this help dialogue");
 							return true;
 						}
@@ -150,7 +151,7 @@ public class SignEdit extends JavaPlugin {
 						return true;
 					}
 				} else {
-					player.sendMessage(chatPrefix + ChatColor.RED + "You do not have permission to edit signs!");
+					player.sendMessage(chatPrefix + ChatColor.RED + "You do not have permission to use SignEdit!");
 					return true;
 				}
 			}
@@ -196,7 +197,7 @@ public class SignEdit extends JavaPlugin {
 	public boolean performLWCCheck(Player player, Protection protection) {
 		if(lwc.canAccessProtection(player, protection)) {
 			return true;
-		}		
+		}
 		return false;
 	}
 	private void firstRun() throws Exception {
