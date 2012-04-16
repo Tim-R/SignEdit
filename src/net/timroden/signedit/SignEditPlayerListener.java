@@ -108,10 +108,12 @@ public class SignEditPlayerListener implements Listener {
 							}
 						} else {
 							plugin.playerLines.remove(p);
+							sign.update();
 							p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You cannot modify shop owners. Access denied!");
 						}
 					} else {
 						plugin.playerLines.remove(p);
+						sign.update();
 						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to edit that sign!");
 					}
 				}
