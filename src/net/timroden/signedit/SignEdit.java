@@ -131,10 +131,10 @@ public class SignEdit extends JavaPlugin {
 									toPut[0] = args[0];
 									toPut[1] = line;
 									playerLines.put(player, toPut);
-									player.sendMessage(chatPrefix + ChatColor.GREEN + "Text saved. Left click a sign to complete your changes.");
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Text saved. Punch a sign to complete your changes.");
 									return true;
 								} else {
-									player.sendMessage(chatPrefix + ChatColor.RED + "The most characters a line can hold is 15. Your text was " + line.length() + " characters.");
+									player.sendMessage(chatPrefix + ChatColor.RED + "The most characters a line can hold is 15. Your text was " + line.length() + " characters long.");
 									return true;
 								}	
 							} else {

@@ -53,7 +53,7 @@ public class SignEditPlayerListener implements Listener {
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player p = event.getPlayer();
 		boolean canAccess = true;
-		boolean csAccess = false;
+		boolean csAccess = true;
 		boolean fbAccess = true;
 		
 		playerLinesArray = plugin.playerLines.get(p);
@@ -71,8 +71,8 @@ public class SignEditPlayerListener implements Listener {
 					if(canAccess == true || p.hasPermission("signedit.override")) {
 						line = (Integer.parseInt(playerLinesArray[0]) - 1);
 						changetext = playerLinesArray[1];
-						if(isValid(sign) && line != 0) {
-							csAccess = true;							
+						if(isValid(sign) && line == 0) {
+							csAccess = false;		
 						}
 						if(line == 1 && changetext.contains("[MC")) {
 							fbAccess = false;
@@ -104,11 +104,11 @@ public class SignEditPlayerListener implements Listener {
 								plugin.playerLines.remove(p);
 							} else {
 								plugin.playerLines.remove(p);
-								p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You appear to be trying to edit a FalseBook sign with invalid data. Access denied!");
+								p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You cannot change IC's. Access denied!");
 							}
 						} else {
 							plugin.playerLines.remove(p);
-							p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You appear to be trying to edit a ChestShop sign with invalid data. Access denied!");
+							p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You cannot modify shop owners. Access denied!");
 						}
 					} else {
 						plugin.playerLines.remove(p);
