@@ -109,7 +109,6 @@ public class SignEdit extends JavaPlugin {
 							player.sendMessage(chatPrefix + ChatColor.GRAY + "When altering your signs, left click to apply changes.");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit cancel - Cancels any pending SignEdit requests");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
-							player.sendMessage(ChatColor.GRAY + "	 - /signedit history [page]");
 							player.sendMessage(ChatColor.GRAY + "    - /signedit help - Display this help dialogue");
 							return true;
 						}
