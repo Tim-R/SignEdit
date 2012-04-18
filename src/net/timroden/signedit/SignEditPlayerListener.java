@@ -102,7 +102,7 @@ public class SignEditPlayerListener implements Listener {
 										e.printStackTrace();
 									}
 								}
-								notify(plugin.chatPrefix + "Sign Change: " + p.getName() + " changed " + lines[Integer.parseInt(playerLinesArray[0])] + " to \"" + changetext + "\"");
+								notify(plugin.chatPrefix + "Sign Change: " + p.getName() + " changed \"" + lines[Integer.parseInt(playerLinesArray[0]) - 1] + "\" to \"" + changetext + "\"");
 								sign.update();
 								plugin.playerLines.remove(p);
 							} else {
