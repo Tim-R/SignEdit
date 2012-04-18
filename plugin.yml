@@ -1,5 +1,5 @@
 name: SignEdit
-version: 1.5
+version: 1.5.1
 description: Ever made a mistake on a sign, and not wanted to take the sign down to fix it? Now you don't have to!
 author: Timr
 website: http://dev.timroden.net/
@@ -10,19 +10,18 @@ commands:
     signedit:
         description: Allows you to edit a sign
         permission: signedit.edit
-
 permissions:
     signedit.edit:
         description: Allows you to use /signedit
-        
+        default: false       
     signedit.override:
         description: Allows users to override LWC's protections.
+        default: op
         children:
             signedit.edit: true
-            signedit.notify: true
-        default: op
+            signedit.notify: true       
     signedit.notify:
-        description: Notifys anyone with this permission when a signedit event happens
+        description: Notifies anyone with this permission when a sign edit event happens
+        default: false       
         children: 
-            signedit.edit: true
-        default: op
+            signedit.edit: true      

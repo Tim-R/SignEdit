@@ -60,6 +60,7 @@ public class SignEditPlayerListener implements Listener {
 		if((event.getClickedBlock() != null) && (event.getClickedBlock().getType().equals(Material.SIGN) || event.getClickedBlock().getType().equals(Material.SIGN_POST) || event.getClickedBlock().getType().equals(Material.WALL_SIGN) )) {
 			BlockState gs = event.getClickedBlock().getState();
 			Sign sign = (Sign) gs;
+			String[] lines = sign.getLines();
 			if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
 				if(plugin.playerLines.containsKey(p)) {
 					if(plugin.config.getBoolean("signedit.uselwc") == true) {
@@ -82,9 +83,11 @@ public class SignEditPlayerListener implements Listener {
 								if(changetext == "") {
 									sign.setLine(line, "");
 									p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line deleted.");
+									changetext = stripColourCodes(changetext);
 								} else {
-									sign.setLine(line, changetext);
+									sign.setLine(line, ChatColor.translateAlternateColorCodes('&', changetext));
 									p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
+									changetext = stripColourCodes(changetext);
 								}
 								if(plugin.config.getBoolean("signedit.log.enabled") == false) {
 									plugin.log.info("[SignEdit] Sign Change: " + p.getName() + " changed sign at x:" + sign.getLocation().getBlockX() + " y:" + sign.getLocation().getBlockY() + " z:" + sign.getLocation().getBlockZ() + " in world " + p.getWorld().getName() + "; Line " + playerLinesArray[0] + " changed to \"" + changetext + "\"");
@@ -99,7 +102,7 @@ public class SignEditPlayerListener implements Listener {
 										e.printStackTrace();
 									}
 								}
-								notify(plugin.chatPrefix + "Sign Change: " + p.getName() + " changed sign at x:" + sign.getLocation().getBlockX() + " y:" + sign.getLocation().getBlockY() + " z:" + sign.getLocation().getBlockZ() + " in world " + p.getWorld().getName() + "; Line " + playerLinesArray[0] + " changed to \"" + changetext + "\"");
+								notify(plugin.chatPrefix + "Sign Change: " + p.getName() + " changed " + lines[Integer.parseInt(playerLinesArray[0])] + " to \"" + changetext + "\"");
 								sign.update();
 								plugin.playerLines.remove(p);
 							} else {
@@ -141,5 +144,10 @@ public class SignEditPlayerListener implements Listener {
         boolean toReturn = true;
         for (int i = 0; i < 4 && toReturn; i++) toReturn = patterns[i].matcher(lines[i]).matches();
         return toReturn && lines[2].indexOf(':') == lines[2].lastIndexOf(':');
+    }
+    
+    /* Colour formatting */ 
+    public static String stripColourCodes(String string) {
+    	return string.replaceAll("&[0-9a-fA-Fk-oK-OrR]", "");        
     }
 }

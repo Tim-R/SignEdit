@@ -25,16 +25,16 @@ import com.griefcraft.model.Protection;
 
 public class SignEdit extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
-		
+
 	/* Variables for logging to our log file */
 	public File logFile = null;
 	public FileWriter fstream = null;
 	public BufferedWriter fileOutput = null;
-	
+
 	/* Variables for LWC integration */
 	Plugin lwcPlugin;
 	LWC lwc;
-	
+
 	/* Prefix to show users in chat when they perform any SignEdit commands */
 	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
 	
@@ -43,20 +43,20 @@ public class SignEdit extends JavaPlugin {
 
 	/* Initialize our listener */
 	public SignEditPlayerListener pl = new SignEditPlayerListener(this);
-	
+
 	/* Variables for dealing with Plugin Configuration files */
 	File configFile;
 	FileConfiguration config;
-	
+
 	@Override
 	public void onEnable() {
 		Long st = System.currentTimeMillis();
 		configFile = new File(getDataFolder(), "config.yml");
 		try {
-	        firstRun();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+			firstRun();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		config = new YamlConfiguration();
 		loadCfg();
 		if(config.getBoolean("signedit.uselwc") == true) {
@@ -67,7 +67,7 @@ public class SignEdit extends JavaPlugin {
 		}
 		
 		getServer().getPluginManager().registerEvents(this.pl, this);
-
+		
 		log.info("[SignEdit] SignEdit enabled successfully! (" + (System.currentTimeMillis() - st) + " ms)");
 	}
 
@@ -82,14 +82,14 @@ public class SignEdit extends JavaPlugin {
 		}
 		log.info("[SignEdit] SignEdit disabled successfully.");
 	}
-	
+
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		Player player = null;
 		String line = "";
 		String[] toPut = new String[2];
 		if(sender instanceof Player) {
 			player = (Player) sender;
-		}		
+		}	
 		if(player != null) {
 			if(cmd.getName().equalsIgnoreCase("signedit")) {
 				if(player.hasPermission("signedit.edit")) {
@@ -107,9 +107,9 @@ public class SignEdit extends JavaPlugin {
 						if(args[0].equalsIgnoreCase("help") && args.length == 1) {
 							player.sendMessage(chatPrefix + ChatColor.GREEN + "Available commands:");
 							player.sendMessage(chatPrefix + ChatColor.GRAY + "When altering your signs, left click to apply changes.");
-							player.sendMessage(ChatColor.GRAY + "    - /signedit cancel - Cancels any pending SignEdit requests");
-							player.sendMessage(ChatColor.GRAY + "    - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
-							player.sendMessage(ChatColor.GRAY + "    - /signedit help - Display this help dialogue");
+							player.sendMessage(ChatColor.GRAY + " - /signedit cancel - Cancels any pending SignEdit requests");
+							player.sendMessage(ChatColor.GRAY + " - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
+							player.sendMessage(ChatColor.GRAY + " - /signedit help - Display this help dialogue");
 							return true;
 						}
 						if(!playerLines.containsKey(player)) {
@@ -122,12 +122,12 @@ public class SignEdit extends JavaPlugin {
 								}
 								if(Integer.parseInt(args[0]) > 4) {
 									player.sendMessage(chatPrefix + "\"" + args[0] + "\" isn't a valid line number! Please enter a valid line number (1,2,3 or 4)");
-									return true;
+									return true;	
 								}
 								if(args.length >= 2) {
 									line = implodeArray(args, " ", 1, args.length);
 								}
-								if(line.length() <= 15) {
+								if(stripColourCodes(line).length() <= 15) {
 									toPut[0] = args[0];
 									toPut[1] = line;
 									playerLines.put(player, toPut);
@@ -158,7 +158,7 @@ public class SignEdit extends JavaPlugin {
 			sender.sendMessage(chatPrefix + ChatColor.RED + "This command can only be initiated by a player.");
 			return true;
 		}
-		return false;		
+		return false;	
 	}
 	public static String implodeArray(String[] inputArray, String glueString, int start, int end) {
 		StringBuilder sb = new StringBuilder();
@@ -176,7 +176,7 @@ public class SignEdit extends JavaPlugin {
 			logFile = new File(getDataFolder(), config.getString("signedit.log.filename"));
 			if(!logFile.exists()){
 				logFile.createNewFile();
-			}		
+			}	
 			fstream = new FileWriter(getDataFolder() + System.getProperty("file.separator") + config.getString("signedit.log.filename"), true);
 			fileOutput = new BufferedWriter(fstream);
 		} catch (IOException e){
@@ -199,38 +199,41 @@ public class SignEdit extends JavaPlugin {
 		}
 		return false;
 	}
+    public static String stripColourCodes(String string) {
+    	return string.replaceAll("&[0-9a-fA-Fk-oK-OrR]", "");        
+    }
 	private void firstRun() throws Exception {
-	    if(!configFile.exists()){
-	        configFile.getParentFile().mkdirs();
-	        copy(getResource("config.yml"), configFile);
-	    }
+		if(!configFile.exists()){
+			configFile.getParentFile().mkdirs();
+			copy(getResource("config.yml"), configFile);
+		}
 	}
 	private void copy(InputStream in, File file) {
-	    try {
-	        OutputStream out = new FileOutputStream(file);
-	        byte[] buf = new byte[1024];
-	        int len;
-	        while((len=in.read(buf))>0){
-	            out.write(buf,0,len);
-	        }
-	        out.close();
-	        in.close();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+		try {
+			OutputStream out = new FileOutputStream(file);
+			byte[] buf = new byte[1024];
+			int len;
+			while((len=in.read(buf))>0){
+				out.write(buf,0,len);
+			}
+			out.close();
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	public void saveCfg() {
-	    try {
-	        config.save(configFile);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
+		try {
+			config.save(configFile);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	public void loadCfg() {
-	    try {
-	        config.load(configFile);
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+		try {
+			config.load(configFile);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
