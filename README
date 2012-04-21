@@ -4,12 +4,14 @@ Commands:
     - /signedit <line> <text> - Change the text on <line> to match that in <text>
     - /signedit cancel - Cancel the current edit
     - /signedit help - Display a help dialogue
+    - /signedit copy - Toggle copying of signs
 
 Permissions:
     - signedit.edit - Allows users to edit their own signs, and any signs they can access through LWC (If support is enabled)
     - signedit.override - Allows users (defaults to OPs) to protection
     
 Change log:
+    1.6: Add /signedit copy, increase security measures for ChestShop
     1.5.1: Add colours/text effects to signs
     1.5: Fix a security/dupe bug with editing ChestShop/FalseBook signs
     1.4: Remove /signedit delete, to delete lines type /signedit <line>
