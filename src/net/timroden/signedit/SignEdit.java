@@ -38,8 +38,9 @@ public class SignEdit extends JavaPlugin {
 	/* Prefix to show users in chat when they perform any SignEdit commands */
 	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
 	
-	/* Main data HashMap, stores all pending SignEdit "jobs" for a specific player */
+	/* Main data HashMaps, stores all pending SignEdit "jobs" for a specific player */
 	public HashMap<Player, String[]> playerLines = new HashMap<Player, String[]>();
+	public HashMap<Player, String[]> clipboard = new HashMap<Player, String[]>();
 
 	/* Initialize our listener */
 	public SignEditPlayerListener pl = new SignEditPlayerListener(this);
@@ -86,7 +87,7 @@ public class SignEdit extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		Player player = null;
 		String line = "";
-		String[] toPut = new String[2];
+		String[] toPut = new String[3];
 		if(sender instanceof Player) {
 			player = (Player) sender;
 		}	
@@ -94,7 +95,7 @@ public class SignEdit extends JavaPlugin {
 			if(cmd.getName().equalsIgnoreCase("signedit")) {
 				if(player.hasPermission("signedit.edit")) {
 					if(args.length > 0) {
-						if(args[0].equalsIgnoreCase("cancel") && args.length == 1) {
+						if(args[0].equalsIgnoreCase("cancel")) {
 							if(playerLines.containsKey(player)) {
 								playerLines.remove(player);
 								player.sendMessage(chatPrefix + ChatColor.GREEN + "Sign change cancelled.");
@@ -104,14 +105,30 @@ public class SignEdit extends JavaPlugin {
 								return true;
 							}
 						}
-						if(args[0].equalsIgnoreCase("help") && args.length == 1) {
+						if(args[0].equalsIgnoreCase("help")) {
 							player.sendMessage(chatPrefix + ChatColor.GREEN + "Available commands:");
 							player.sendMessage(chatPrefix + ChatColor.GRAY + "When altering your signs, left click to apply changes.");
 							player.sendMessage(ChatColor.GRAY + " - /signedit cancel - Cancels any pending SignEdit requests");
 							player.sendMessage(ChatColor.GRAY + " - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
+							player.sendMessage(ChatColor.GRAY + " - /signedit copy - Adds a sign to your clipboard");
 							player.sendMessage(ChatColor.GRAY + " - /signedit help - Display this help dialogue");
 							return true;
 						}
+						if(args[0].equalsIgnoreCase("copy")) {
+							if(playerLines.containsKey(player)) {
+								playerLines.remove(player);
+								clipboard.remove(player);
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "Persistent copying disabled.");
+								return true;
+							} else {
+								toPut[0] = null;
+								toPut[1] = null;
+								toPut[2] = "copy";
+								playerLines.put(player, toPut);
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "Persistent copying enabled. Punch the sign you wish to add to clipboard.");
+								return true;
+							}
+						}						
 						if(!playerLines.containsKey(player)) {
 							if(args.length >= 1) {
 								try {
@@ -130,6 +147,7 @@ public class SignEdit extends JavaPlugin {
 								if(stripColourCodes(line).length() <= 15) {
 									toPut[0] = args[0];
 									toPut[1] = line;
+									toPut[2] = "edit";
 									playerLines.put(player, toPut);
 									player.sendMessage(chatPrefix + ChatColor.GREEN + "Text saved. Punch a sign to complete your changes.");
 									return true;

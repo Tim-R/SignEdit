@@ -15,9 +15,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPlaceEvent;
+
 import com.griefcraft.model.Protection;
 
 public class SignEditPlayerListener implements Listener {
@@ -62,7 +65,30 @@ public class SignEditPlayerListener implements Listener {
 			Sign sign = (Sign) gs;
 			String[] lines = sign.getLines();
 			if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-				if(plugin.playerLines.containsKey(p)) {
+				/* Copy command */
+				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "copy") {
+					if(!plugin.clipboard.containsKey(p)) {
+						if(plugin.config.getBoolean("signedit.uselwc") == true) {
+							canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
+						}
+						if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.getBoolean("signedit.ignorecreative") == true) {
+							event.setCancelled(true);
+							sign.update();
+						}
+						if(canAccess == true || p.hasPermission("signedit.override")) {
+							plugin.clipboard.put(p, sign.getLines());
+							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard. To disable persistent copying, type /signedit copy");
+							
+						} else {
+							plugin.playerLines.remove(p);
+							sign.update();
+							p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to copy that sign!");
+						}
+					}
+				
+				}				
+				/* Edit command */
+				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "edit") {
 					if(plugin.config.getBoolean("signedit.uselwc") == true) {
 						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
 					}
@@ -124,6 +150,24 @@ public class SignEditPlayerListener implements Listener {
 		}
 	}
 	
+	@EventHandler
+	public void onBlockPlace(BlockPlaceEvent event) {
+		Player p = event.getPlayer();
+		Block b = event.getBlockPlaced();
+		// if((event.getClickedBlock() != null) && (event.getClickedBlock().getType().equals(Material.SIGN) || event.getClickedBlock().getType().equals(Material.SIGN_POST) || event.getClickedBlock().getType().equals(Material.WALL_SIGN) )) {
+		if((b != null) && (b.getType().equals(Material.SIGN)) || b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN)) {
+			Sign sign = (Sign) b.getState();
+			if(plugin.clipboard.containsKey(p)) {
+				String[] lines = plugin.clipboard.get(p);
+				sign.setLine(0, lines[0]);
+				sign.setLine(1, lines[1]);
+				sign.setLine(2, lines[2]);
+				sign.setLine(3, lines[3]);
+				sign.update();
+			}
+		}
+	}
+	
 	public void notify(String message) {
 	    for(Player player: Bukkit.getServer().getOnlinePlayers()) {	        
 	        if(player.hasPermission("signedit.notify")) {
@@ -131,7 +175,7 @@ public class SignEditPlayerListener implements Listener {
 	        }	     
 	    }
 	}
-	/* ChestShop Security Mesaures */
+	/* ChestShop Security Measures */
 	
 	public static boolean isValid(Sign sign) {
         return isValid(sign.getLines());
