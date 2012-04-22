@@ -93,17 +93,17 @@ public class SignEdit extends JavaPlugin {
 		}	
 		if(player != null) {
 			if(cmd.getName().equalsIgnoreCase("signedit")) {
-				if(args[0].equalsIgnoreCase("help")) {
-					player.sendMessage(chatPrefix + ChatColor.GREEN + "Available commands:");
-					player.sendMessage(chatPrefix + ChatColor.GRAY + "When altering your signs, left click to apply changes.");
-					player.sendMessage(ChatColor.GRAY + " - /signedit cancel - Cancels any pending SignEdit requests");
-					player.sendMessage(ChatColor.GRAY + " - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
-					player.sendMessage(ChatColor.GRAY + " - /signedit copy - Toggle copying of signs");
-					player.sendMessage(ChatColor.GRAY + " - /signedit help - Display this help dialogue");
-					return true;
-				}
-				if(player.hasPermission("signedit.edit")) {
-					if(args.length > 0) {
+				if(args.length > 0) {
+					if(args[0].equalsIgnoreCase("help")) {
+						player.sendMessage(chatPrefix + ChatColor.GREEN + "Available commands:");
+						player.sendMessage(chatPrefix + ChatColor.GRAY + "When altering your signs, left click to apply changes.");
+						player.sendMessage(ChatColor.GRAY + " - /signedit cancel - Cancels any pending SignEdit requests");
+						player.sendMessage(ChatColor.GRAY + " - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
+						player.sendMessage(ChatColor.GRAY + " - /signedit copy - Toggle copying of signs");
+						player.sendMessage(ChatColor.GRAY + " - /signedit help - Display this help dialogue");
+						return true;
+					}
+					if(player.hasPermission("signedit.edit")) {
 						if(args[0].equalsIgnoreCase("cancel")) {
 							if(playerLines.containsKey(player)) {
 								playerLines.remove(player);
@@ -164,11 +164,11 @@ public class SignEdit extends JavaPlugin {
 							return true;
 						}
 					} else {
-						player.sendMessage(chatPrefix + ChatColor.RED + "For usage information on this command, type /signedit help");
+						player.sendMessage(chatPrefix + ChatColor.RED + "You do not have permission to use SignEdit!");
 						return true;
 					}
 				} else {
-					player.sendMessage(chatPrefix + ChatColor.RED + "You do not have permission to use SignEdit!");
+					player.sendMessage(chatPrefix + ChatColor.RED + "For usage information on this command, type /signedit help");
 					return true;
 				}
 			}

@@ -102,11 +102,11 @@ public class SignEditPlayerListener implements Listener {
 					if(canAccess == true || p.hasPermission("signedit.override")) {
 						line = (Integer.parseInt(playerLinesArray[0]) - 1);
 						changetext = playerLinesArray[1];
-						if(futureValid(sign, changetext, line)) {
-							if (line == 0 && !changetext.equals(p.getName())){
+						if(futureValid(sign, changetext, line) && !p.hasPermission("signedit.override")) {
+							if (line == 0){
 								csAccess = false;		
 							}else{
-								if (formatFirstLine(lines[0], p)) sign.setLine(0, p.getName());								
+								if (formatFirstLine(lines[0], p)) sign.setLine(0, signName(p.getName()));								
 							}
 						}
 						if(line == 1 && changetext.contains("[MC")) {
@@ -115,18 +115,12 @@ public class SignEditPlayerListener implements Listener {
 						if(csAccess) {
 							if(fbAccess) {
 								if(changetext == "") {
-									sign.setLine(line, "");
 									p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line deleted.");
+									sign.setLine(line, "");
 									changetext = stripColourCodes(changetext);
 								} else {
+									p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
 									sign.setLine(line, ChatColor.translateAlternateColorCodes('&', changetext));
-									if (becomeValid(sign, changetext,line)){
-										p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Shop Created");
-									} else if (isValid(sign)){
-										p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Shop Updated");
-									} else {
-										p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");										
-									}
 									changetext = stripColourCodes(changetext);
 								}
 								if(plugin.config.getBoolean("signedit.log.enabled") == false) {
@@ -150,8 +144,6 @@ public class SignEditPlayerListener implements Listener {
 								p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You cannot change IC's. Access denied!");
 							}
 						} else {
-							if (line!=0){
-							}
 							plugin.playerLines.remove(p);
 							sign.update();
 							p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You cannot modify shop owners. Access denied!");
@@ -174,13 +166,11 @@ public class SignEditPlayerListener implements Listener {
 	}
 	/* ChestShop Security Measures */	
 	public static boolean futureValid(Sign sign, String changetext, Integer line){
-		String [] newsign = sign.getLines();
+		String [] newsign = sign.getLines().clone();
 		newsign[line]=changetext;
 		return isValid(newsign);
 	}	
-	public static boolean becomeValid(Sign sign, String changetext, Integer line){
-		return (!isValid(sign) && futureValid(sign, changetext, line));
-	}
+	
 	public static boolean isValid(Sign sign) {
         return isValid(sign.getLines());
     }
@@ -197,5 +187,9 @@ public class SignEditPlayerListener implements Listener {
     }    
     public static String stripColourCodes(String string) {
     	return string.replaceAll("&[0-9a-fA-Fk-oK-OrR]", "");        
+    }
+    
+    public static String signName(String name) {
+    	return (name.length() > 15 ? name.substring(0, 15) : name);
     }
 }
