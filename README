@@ -11,6 +11,7 @@ Permissions:
     - signedit.override - Allows users (defaults to OPs) to protection
     
 Change log:
+    1.6.2: Change the /signedit command, you now overwrite previous requests when using it a second time
     1.6.1: Fixed a 1.6 bug, increased security measures for ChestShop
     1.6: Add /signedit copy, increase security measures for ChestShop
     1.5.1: Add colours/text effects to signs

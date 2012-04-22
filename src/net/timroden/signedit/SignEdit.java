@@ -129,38 +129,33 @@ public class SignEdit extends JavaPlugin {
 								return true;
 							}
 						}						
-						if(!playerLines.containsKey(player)) {
-							if(args.length >= 1) {
-								try {
-									Integer.parseInt(args[0]);
-								} catch(NumberFormatException ex) {
-									player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a number. Please enter a valid line number. (1,2,3 or 4)");
-									return true;
-								}
-								if(Integer.parseInt(args[0]) > 4) {
-									player.sendMessage(chatPrefix + "\"" + args[0] + "\" isn't a valid line number! Please enter a valid line number (1,2,3 or 4)");
-									return true;	
-								}
-								if(args.length >= 2) {
-									line = implodeArray(args, " ", 1, args.length);
-								}
-								if(stripColourCodes(line).length() <= 15) {
-									toPut[0] = args[0];
-									toPut[1] = line;
-									toPut[2] = "edit";
-									playerLines.put(player, toPut);
-									player.sendMessage(chatPrefix + ChatColor.GREEN + "Text saved. Punch a sign to complete your changes.");
-									return true;
-								} else {
-									player.sendMessage(chatPrefix + ChatColor.RED + "The most characters a line can hold is 15. Your text was " + line.length() + " characters long.");
-									return true;
-								}	
-							} else {
-								player.sendMessage(chatPrefix + ChatColor.RED + "For usage information on this command, type /signedit help");
+						if(args.length >= 1) {
+							try {
+								Integer.parseInt(args[0]);
+							} catch(NumberFormatException ex) {
+								player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a number. Please enter a valid line number. (1,2,3 or 4)");
 								return true;
 							}
+							if(Integer.parseInt(args[0]) > 4) {
+								player.sendMessage(chatPrefix + "\"" + args[0] + "\" isn't a valid line number! Please enter a valid line number (1,2,3 or 4)");
+								return true;	
+							}
+							if(args.length >= 2) {
+								line = implodeArray(args, " ", 1, args.length);
+							}
+							if(stripColourCodes(line).length() <= 15) {
+								toPut[0] = args[0];
+								toPut[1] = line;
+								toPut[2] = "edit";
+								playerLines.put(player, toPut);
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "Text saved. Punch a sign to complete your changes.");
+								return true;
+							} else {
+								player.sendMessage(chatPrefix + ChatColor.RED + "The most characters a line can hold is 15. Your text was " + line.length() + " characters long.");
+								return true;
+							}	
 						} else {
-							player.sendMessage(chatPrefix + ChatColor.RED + "You already have a request pending. You can remove it by typing \"/signedit cancel\"");
+							player.sendMessage(chatPrefix + ChatColor.RED + "For usage information on this command, type /signedit help");
 							return true;
 						}
 					} else {
