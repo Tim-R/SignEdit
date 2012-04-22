@@ -82,15 +82,24 @@ public class SignEditPlayerListener implements Listener {
 							p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to copy that sign!");
 						}
 					}
-				}	
+				}
 				if(plugin.clipboard.containsKey(p)) {
-					event.setCancelled(true);
-					String[] cplines = plugin.clipboard.get(p);
-					sign.setLine(0, cplines[0]);
-					sign.setLine(1, cplines[1]);
-					sign.setLine(2, cplines[2]);
-					sign.setLine(3, cplines[3]);
-					sign.update();
+					if(plugin.config.getBoolean("signedit.uselwc") == true) {
+						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
+					}
+					if(canAccess == true || p.hasPermission("signedit.override")) {
+						event.setCancelled(true);
+						String[] cplines = plugin.clipboard.get(p);
+						sign.setLine(0, cplines[0]);
+						sign.setLine(1, cplines[1]);
+						sign.setLine(2, cplines[2]);
+						sign.setLine(3, cplines[3]);
+						sign.update();
+					} else {
+						plugin.playerLines.remove(p);
+						sign.update();
+						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to paste on that sign!");
+					}
 				}
 				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "edit") {
 					if(plugin.config.getBoolean("signedit.uselwc") == true) {
