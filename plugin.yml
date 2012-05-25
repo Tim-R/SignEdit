@@ -23,7 +23,7 @@ permissions:
             signedit.admin: true
     signedit.admin:
         description: Allows you to admin SignEdit
-        default: false
+        default: op
     signedit.notify:
         description: Notifies anyone with this permission when a sign edit event happens
         default: false       

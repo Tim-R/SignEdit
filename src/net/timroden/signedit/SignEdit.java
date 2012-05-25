@@ -53,9 +53,11 @@ public class SignEdit extends JavaPlugin {
 		Long st = System.currentTimeMillis();
 		config = new Config(this);
 		version = new VersionChecker(this);
-
+		version.versionCheck();
 		getServer().getPluginManager().registerEvents(this.pl, this);
-		
+		if(config.useLWC) {
+			findLWC();
+		}		
 		log.info("[SignEdit] SignEdit enabled successfully! (" + (System.currentTimeMillis() - st) + " ms)");
 	}
 
@@ -100,6 +102,7 @@ public class SignEdit extends JavaPlugin {
 							player.sendMessage(chatPrefix + ChatColor.AQUA + "Reloading config...");
 							config.reload();
 							player.sendMessage(chatPrefix + ChatColor.AQUA + "Config reloaded.");
+							return true;
 						} else {
 							player.sendMessage(chatPrefix + ChatColor.RED + "You do not have permission to reload the SignEdit config!");
 							return true;

@@ -52,7 +52,7 @@ public class VersionChecker {
 	public void versionCheck() {
 		String curVersion = plugin.getDescription().getVersion();
 		if (latestVersion == null) {
-			latestVersion = getLatestVersion();
+			latestVersion = getLatestVersion().toLowerCase().replace("signedit", "");
 		}
 		String msg = null;
 		if (latestVersion != null) {
