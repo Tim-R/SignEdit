@@ -4,13 +4,15 @@ Commands:
     - /signedit <line> <text> - Change the text on <line> to match that in <text>
     - /signedit cancel - Cancel the current edit
     - /signedit help - Display a help dialogue
-    - /signedit copy - Toggle copying of signs
+    - /signedit copy <parameters> - copy a sign a number of times; choose a #, persist (infinite), or take the default
+    - /signedit paste <parameters> - reload your clipboard for more pasting
 
 Permissions:
     - signedit.edit - Allows users to edit their own signs, and any signs they can access through LWC (If support is enabled)
     - signedit.override - Allows users (defaults to OPs) to protection
     
 Change log:
+	1.7: Added /signedit paste and revamped the copy/paste system
     1.6.3: Add a few permission checks to /signedit copy
     1.6.2: Change the /signedit command, you now overwrite previous requests when using it a second time
     1.6.1: Fixed a 1.6 bug, increased security measures for ChestShop

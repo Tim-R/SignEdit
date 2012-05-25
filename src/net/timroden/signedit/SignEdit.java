@@ -41,6 +41,8 @@ public class SignEdit extends JavaPlugin {
 	/* Main data HashMaps, stores all pending SignEdit "jobs" for a specific player */
 	public HashMap<Player, String[]> playerLines = new HashMap<Player, String[]>();
 	public HashMap<Player, String[]> clipboard = new HashMap<Player, String[]>();
+	public HashMap<Player, String> pasteAmount = new HashMap<Player, String>();
+	
 
 	/* Initialize our listener */
 	public SignEditPlayerListener pl = new SignEditPlayerListener(this);
@@ -99,7 +101,9 @@ public class SignEdit extends JavaPlugin {
 						player.sendMessage(chatPrefix + ChatColor.GRAY + "When altering your signs, left click to apply changes.");
 						player.sendMessage(ChatColor.GRAY + " - /signedit cancel - Cancels any pending SignEdit requests");
 						player.sendMessage(ChatColor.GRAY + " - /signedit <line> <text> - Changes the text on the specified line to <text> (The line must be 1,2,3, or 4)");
-						player.sendMessage(ChatColor.GRAY + " - /signedit copy - Toggle copying of signs");
+						player.sendMessage(ChatColor.GRAY + " - /signedit [copy]/[paste] <#>- Copy or paste a sign - amount optional for copying");
+						player.sendMessage(ChatColor.GRAY + " - /signedit [copy]/[paste] <persist> - Copy or paste unlimited times");
+						player.sendMessage(ChatColor.GRAY + " - /signedit [copy]/[paste] <default> <#> - Reassign the default amount you want to copy and paste");
 						player.sendMessage(ChatColor.GRAY + " - /signedit help - Display this help dialogue");
 						return true;
 					}
@@ -115,20 +119,109 @@ public class SignEdit extends JavaPlugin {
 							}
 						}
 						if(args[0].equalsIgnoreCase("copy")) {
-							if(playerLines.containsKey(player)) {
-								playerLines.remove(player);
-								clipboard.remove(player);
-								player.sendMessage(chatPrefix + ChatColor.GREEN + "Persistent copying disabled.");
-								return true;
-							} else {
+							if(!pasteAmount.containsKey(player)){
+								pasteAmount.put(player, "1");
+							}
+							if(args.length>1){
+								if(args[1].equalsIgnoreCase("persist")){
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Persistent copying enabled. Punch the sign you wish to add to clipboard.");
+									toPut[0] = "persist";
+									toPut[1] = null;
+									toPut[2] = "copy";
+									playerLines.put(player, toPut);
+									return true;
+								}else if(args[1].equalsIgnoreCase("default")){
+									try{
+										Integer.parseInt(args[2]);
+									}catch(NumberFormatException ex) {
+										player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a valid number. Please enter an integer to set as your default copying amount.");
+										return true;
+									}
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Changed the default paste amount to "+args[2]);
+									pasteAmount.put(player, args[2]);
+									return true;
+								}else{
+									try{
+										Integer.parseInt(args[1]);
+									}catch(NumberFormatException ex) {
+										player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[1] + "\" is not a valid number.");
+										player.sendMessage(chatPrefix + ChatColor.GREEN + " Punch your sign to copy. Making default amount of "+pasteAmount.get(player)+" copies");
+										toPut[0] = null;
+										toPut[1] = pasteAmount.get(player);
+										toPut[2] = "copy";
+										playerLines.put(player, toPut);
+										return true;
+									}
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Punch your Sign to Copy. Making "+args[1]+" copies, /signedit paste # to extend");
+									toPut[0] = null;
+									toPut[1] = args[1];
+									toPut[2] = "copy";
+									playerLines.put(player, toPut);
+									return true;
+								}
+							}else{
 								toPut[0] = null;
-								toPut[1] = null;
+								toPut[1] = pasteAmount.get(player);
 								toPut[2] = "copy";
 								playerLines.put(player, toPut);
-								player.sendMessage(chatPrefix + ChatColor.GREEN + "Persistent copying enabled. Punch the sign you wish to add to clipboard.");
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "Punch your sign to copy. Making default amount of "+pasteAmount.get(player)+" copies.");
 								return true;
 							}
-						}						
+						}
+						if(args[0].equalsIgnoreCase("paste")){
+							if (!clipboard.containsKey(player)){
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "You don't have anything copied!");
+								return true;
+							}
+							if(!pasteAmount.containsKey(player)){
+								pasteAmount.put(player, "1");
+							}
+							if(args.length>1){
+								if(args[1].equalsIgnoreCase("persist")){
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Pasting indefinetly");
+									toPut[0] = "persist";
+									toPut[1] = null;
+									toPut[2] = "paste";
+									playerLines.put(player, toPut);
+									return true;
+								}else if(args[1].equalsIgnoreCase("default")){
+									try{
+										Integer.parseInt(args[2]);
+									}catch(NumberFormatException ex) {
+										player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a valid number. Please enter an integer to set as your default copying amount.");
+										return true;
+									}
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Changed the default paste amount to "+args[2]);
+									pasteAmount.put(player, args[2]);
+									return true;
+								}else{
+									try{
+										Integer.parseInt(args[1]);
+									}catch(NumberFormatException ex) {
+										player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a valid number. Reloading clipboard for "+pasteAmount.get(player)+" pastes.");
+										toPut[0] = null;
+										toPut[1] = pasteAmount.get(player);
+										toPut[2] = "paste";
+										playerLines.put(player, toPut);
+										return true;
+									}
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Reloading clipboard for "+args[1]+" pastes.");
+									toPut[0] = null;
+									toPut[1] = args[1];
+									toPut[2] = "paste";
+									playerLines.put(player, toPut);
+									return true;
+								}
+							}else{
+								toPut[0] = null;
+								toPut[1] = pasteAmount.get(player);
+								toPut[2] = "paste";
+								playerLines.put(player, toPut);
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "Making default amount of:  "+pasteAmount.get(player)+" pastes.");
+								return true;
+							}
+							
+						}
 						if(args.length >= 1) {
 							try {
 								Integer.parseInt(args[0]);

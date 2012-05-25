@@ -64,30 +64,40 @@ public class SignEditPlayerListener implements Listener {
 			String[] lines = sign.getLines();
 			if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
 				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "copy") {
-					if(!plugin.clipboard.containsKey(p)) {
-						if(plugin.config.getBoolean("signedit.uselwc") == true) {
-							canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
-						}
-						if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.getBoolean("signedit.ignorecreative") == true) {
-							event.setCancelled(true);
-							sign.update();
-						}
-						if(canAccess == true || p.hasPermission("signedit.override")) {
-							plugin.clipboard.put(p, sign.getLines());
-							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard, punch a sign to paste. To disable persistent copying, type /signedit copy");
-							
-						} else {
-							plugin.playerLines.remove(p);
-							sign.update();
-							p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to copy that sign!");
-						}
-					}
-				}
-				if(plugin.clipboard.containsKey(p)) {
 					if(plugin.config.getBoolean("signedit.uselwc") == true) {
 						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
 					}
+					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.getBoolean("signedit.ignorecreative") == true) {
+						event.setCancelled(true);
+						sign.update();
+					}
 					if(canAccess == true || p.hasPermission("signedit.override")) {
+						plugin.clipboard.put(p, sign.getLines());
+						playerLinesArray[2]="paste";
+						p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard, punch a sign to paste.");
+						
+					} else {
+						plugin.playerLines.remove(p);
+						sign.update();
+						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to copy that sign!");
+					}
+				}else if(plugin.clipboard.containsKey(p)&& playerLinesArray[2]== "paste") {
+					if(plugin.config.getBoolean("signedit.uselwc") == true) {
+						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
+						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to paste on that sign!");
+					}
+					if(playerLinesArray[0]==null && !(playerLinesArray[0]=="persist")){
+						if(Integer.parseInt(playerLinesArray[1]) == 0){
+							p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You are out of Copies!");
+							playerLinesArray[2]="outOfInk";
+						}else{
+							playerLinesArray[1]= ""+(Integer.parseInt(playerLinesArray[1])-1);
+							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign has been pasted. You have "+ playerLinesArray[1]+ " copies left.");
+						}
+					}else{
+						p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign has been pasted. Persist mode enabled.");
+					}
+					if((canAccess == true || p.hasPermission("signedit.override"))&& playerLinesArray[2]== "paste") {
 						event.setCancelled(true);
 						String[] cplines = plugin.clipboard.get(p);
 						sign.setLine(0, cplines[0]);
@@ -98,7 +108,6 @@ public class SignEditPlayerListener implements Listener {
 					} else {
 						plugin.playerLines.remove(p);
 						sign.update();
-						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to paste on that sign!");
 					}
 				}
 				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "edit") {
