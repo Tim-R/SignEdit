@@ -54,6 +54,10 @@ public class SignEdit extends JavaPlugin {
 		config = new Config(this);
 		version = new VersionChecker(this);
 		version.versionCheck();
+		if(config.useLWC){
+			findLWC();
+		}
+		
 		getServer().getPluginManager().registerEvents(this.pl, this);
 		if(config.useLWC) {
 			findLWC();
