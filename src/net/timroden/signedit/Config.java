@@ -9,8 +9,6 @@ public class Config {
 	public boolean useLWC, ignoreCreative, logEnabled;
 	public String logFilename;
 	
-	public String consoleSender, prefixAdmin, prefixToAdmin, prefixAll;
-	
 	public Config(SignEdit plugin) {
 		this.plugin = plugin;
 		config = plugin.getConfig().getRoot();
