@@ -2,19 +2,14 @@ package net.timroden.signedit;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -48,27 +43,17 @@ public class SignEdit extends JavaPlugin {
 	public SignEditPlayerListener pl = new SignEditPlayerListener(this);
 
 	/* Variables for dealing with Plugin Configuration files */
-	File configFile;
-	FileConfiguration config;
-
+	Config config;
+	
+	/* Version Checker */
+	VersionChecker version;
+	
 	@Override
 	public void onEnable() {
 		Long st = System.currentTimeMillis();
-		configFile = new File(getDataFolder(), "config.yml");
-		try {
-			firstRun();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		config = new YamlConfiguration();
-		loadCfg();
-		if(config.getBoolean("signedit.uselwc") == true) {
-			findLWC();
-		}
-		if(config.getBoolean("signedit.log.enabled") == true) {
-			openFileOutput();
-		}
-		
+		config = new Config(this);
+		version = new VersionChecker(this);
+
 		getServer().getPluginManager().registerEvents(this.pl, this);
 		
 		log.info("[SignEdit] SignEdit enabled successfully! (" + (System.currentTimeMillis() - st) + " ms)");
@@ -76,7 +61,7 @@ public class SignEdit extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		if(config.getBoolean("signedit.log.enabled") == true) {
+		if(config.logEnabled) {
 			try {
 				fileOutput.close();
 			} catch (IOException e) {
@@ -104,8 +89,21 @@ public class SignEdit extends JavaPlugin {
 						player.sendMessage(ChatColor.GRAY + " - /signedit [copy]/[paste] <#>- Copy or paste a sign - amount optional for copying");
 						player.sendMessage(ChatColor.GRAY + " - /signedit [copy]/[paste] <persist> - Copy or paste unlimited times");
 						player.sendMessage(ChatColor.GRAY + " - /signedit [copy]/[paste] <default> <#> - Reassign the default amount you want to copy and paste");
+						if(player.hasPermission("signedit.admin")) {
+							player.sendMessage(ChatColor.GRAY + " - /signedit reload - Reloads SignEdit configuration");
+						}
 						player.sendMessage(ChatColor.GRAY + " - /signedit help - Display this help dialogue");
 						return true;
+					}
+					if(args[0].equalsIgnoreCase("reload")) {
+						if(player.hasPermission("signedit.admin")) {
+							player.sendMessage(chatPrefix + ChatColor.AQUA + "Reloading config...");
+							config.reload();
+							player.sendMessage(chatPrefix + ChatColor.AQUA + "Config reloaded.");
+						} else {
+							player.sendMessage(chatPrefix + ChatColor.RED + "You do not have permission to reload the SignEdit config!");
+							return true;
+						}
 					}
 					if(player.hasPermission("signedit.edit")) {
 						if(args[0].equalsIgnoreCase("cancel")) {
@@ -279,11 +277,11 @@ public class SignEdit extends JavaPlugin {
 	}
 	public void openFileOutput() {
 		try	{
-			logFile = new File(getDataFolder(), config.getString("signedit.log.filename"));
+			logFile = new File(getDataFolder(), config.logFilename);
 			if(!logFile.exists()){
 				logFile.createNewFile();
 			}	
-			fstream = new FileWriter(getDataFolder() + System.getProperty("file.separator") + config.getString("signedit.log.filename"), true);
+			fstream = new FileWriter(getDataFolder() + System.getProperty("file.separator") + config.logFilename, true);
 			fileOutput = new BufferedWriter(fstream);
 		} catch (IOException e){
 			e.printStackTrace();
@@ -308,38 +306,4 @@ public class SignEdit extends JavaPlugin {
     public static String stripColourCodes(String string) {
     	return string.replaceAll("&[0-9a-fA-Fk-oK-OrR]", "");        
     }
-	private void firstRun() throws Exception {
-		if(!configFile.exists()){
-			configFile.getParentFile().mkdirs();
-			copy(getResource("config.yml"), configFile);
-		}
-	}
-	private void copy(InputStream in, File file) {
-		try {
-			OutputStream out = new FileOutputStream(file);
-			byte[] buf = new byte[1024];
-			int len;
-			while((len=in.read(buf))>0){
-				out.write(buf,0,len);
-			}
-			out.close();
-			in.close();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	public void saveCfg() {
-		try {
-			config.save(configFile);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	public void loadCfg() {
-		try {
-			config.load(configFile);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 }

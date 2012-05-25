@@ -64,10 +64,10 @@ public class SignEditPlayerListener implements Listener {
 			String[] lines = sign.getLines();
 			if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
 				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "copy") {
-					if(plugin.config.getBoolean("signedit.uselwc") == true) {
+					if(plugin.config.useLWC) {
 						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
 					}
-					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.getBoolean("signedit.ignorecreative") == true) {
+					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.ignoreCreative) {
 						event.setCancelled(true);
 						sign.update();
 					}
@@ -82,7 +82,7 @@ public class SignEditPlayerListener implements Listener {
 						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to copy that sign!");
 					}
 				}else if(plugin.clipboard.containsKey(p)&& playerLinesArray[2]== "paste") {
-					if(plugin.config.getBoolean("signedit.uselwc") == true) {
+					if(plugin.config.useLWC) {
 						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
 						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to paste on that sign!");
 					}
@@ -111,10 +111,10 @@ public class SignEditPlayerListener implements Listener {
 					}
 				}
 				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "edit") {
-					if(plugin.config.getBoolean("signedit.uselwc") == true) {
+					if(plugin.config.useLWC) {
 						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
 					}
-					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.getBoolean("signedit.ignorecreative") == true) {
+					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.ignoreCreative) {
 						event.setCancelled(true);
 					}
 					if(canAccess == true || p.hasPermission("signedit.override")) {
@@ -141,7 +141,7 @@ public class SignEditPlayerListener implements Listener {
 									sign.setLine(line, ChatColor.translateAlternateColorCodes('&', changetext));
 									changetext = stripColourCodes(changetext);
 								}
-								if(plugin.config.getBoolean("signedit.log.enabled") == false) {
+								if(plugin.config.logEnabled == false) {
 									plugin.log.info("[SignEdit] Sign Change: " + p.getName() + " changed sign at x:" + sign.getLocation().getBlockX() + " y:" + sign.getLocation().getBlockY() + " z:" + sign.getLocation().getBlockZ() + " in world " + p.getWorld().getName() + "; Line " + playerLinesArray[0] + " changed to \"" + changetext + "\"");
 								} else {
 									DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -182,13 +182,11 @@ public class SignEditPlayerListener implements Listener {
 	        }	     
 	    }
 	}
-	/* ChestShop Security Measures */	
 	public static boolean futureValid(Sign sign, String changetext, Integer line){
 		String [] newsign = sign.getLines().clone();
 		newsign[line]=changetext;
 		return isValid(newsign);
 	}	
-	
 	public static boolean isValid(Sign sign) {
         return isValid(sign.getLines());
     }
