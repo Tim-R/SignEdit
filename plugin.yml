@@ -28,4 +28,4 @@ permissions:
         description: Notifies anyone with this permission when a sign edit event happens
         default: false       
         children: 
-            signedit.edit: true      
+            signedit.edit: true
