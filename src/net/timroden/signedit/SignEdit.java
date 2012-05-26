@@ -59,7 +59,7 @@ public class SignEdit extends JavaPlugin {
 		}
 		
 		getServer().getPluginManager().registerEvents(this.pl, this);
-		log.info("[SignEdit] SignEdit enabled successfully! (" + (System.currentTimeMillis() - st) + " ms)");
+		log.info("[SignEdit] SignEdit enabled successfully! (" + (((System.currentTimeMillis() - st) / 1000D) % 60) + " s)");
 	}
 
 	@Override
