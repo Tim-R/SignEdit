@@ -36,8 +36,7 @@ public class SignEdit extends JavaPlugin {
 	/* Main data HashMaps, stores all pending SignEdit "jobs" for a specific player */
 	public HashMap<Player, String[]> playerLines = new HashMap<Player, String[]>();
 	public HashMap<Player, String[]> clipboard = new HashMap<Player, String[]>();
-	public HashMap<Player, String> pasteAmount = new HashMap<Player, String>();
-	
+	public HashMap<Player, String> pasteAmount = new HashMap<Player, String>();	
 
 	/* Initialize our listener */
 	public SignEditPlayerListener pl = new SignEditPlayerListener(this);
@@ -46,24 +45,26 @@ public class SignEdit extends JavaPlugin {
 	Config config;
 	
 	/* Version Checker */
-	VersionChecker version;
+	VersionChecker version; 
 	
 	@Override
 	public void onEnable() {
 		Long st = System.currentTimeMillis();
 		config = new Config(this);
 		version = new VersionChecker(this);
+			
 		version.versionCheck();
 		if(config.useLWC){
 			findLWC();
 		}
 		
 		getServer().getPluginManager().registerEvents(this.pl, this);
-		log.info("[SignEdit] SignEdit enabled successfully! (" + (((System.currentTimeMillis() - st) / 1000D) % 60) + " s)");
+		log.info("[SignEdit] Enabled successfully! (" + (((System.currentTimeMillis() - st) / 1000D) % 60) + " s)");
 	}
 
 	@Override
 	public void onDisable() {
+		
 		if(config.logEnabled) {
 			try {
 				fileOutput.close();
@@ -71,7 +72,7 @@ public class SignEdit extends JavaPlugin {
 				e.printStackTrace();
 			}
 		}
-		log.info("[SignEdit] SignEdit disabled successfully.");
+		log.info("[SignEdit] Disabled successfully.");
 	}
 
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {

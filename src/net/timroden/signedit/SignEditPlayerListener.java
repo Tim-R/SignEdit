@@ -15,26 +15,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
-import org.bukkit.event.block.Action;
 
 import com.griefcraft.model.Protection;
 
 public class SignEditPlayerListener implements Listener {
-	/* The parent plugin, we use this for config options, chatprefix, etc */
 	public SignEdit plugin;
-	
-	/* Declare the protection object for LWC */
 	Protection protection;
-	
-	/* The 3 main data handlers for changing lines
-	 * 
-	 * @param playerLinesArray holds the line number and text to change said line to 
-	 * @param line holds the line to be changed
-	 * @param changetext holds the text to put on the line
-	 * 
-	 */
 	String[] playerLinesArray;
 	int line;
 	String changetext;
@@ -58,11 +47,11 @@ public class SignEditPlayerListener implements Listener {
 		boolean fbAccess = true;
 		
 		playerLinesArray = plugin.playerLines.get(p);
-		if((event.getClickedBlock() != null) && (event.getClickedBlock().getType().equals(Material.SIGN) || event.getClickedBlock().getType().equals(Material.SIGN_POST) || event.getClickedBlock().getType().equals(Material.WALL_SIGN) )) {
+		if((event.getClickedBlock() != null) && isSign(event.getClickedBlock())) {
 			BlockState gs = event.getClickedBlock().getState();
 			Sign sign = (Sign) gs;
 			String[] lines = sign.getLines();
-			if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+			if(event.getAction().equals(plugin.config.clickAction)) {
 				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "copy") {
 					if(plugin.config.useLWC) {
 						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
@@ -181,6 +170,9 @@ public class SignEditPlayerListener implements Listener {
 	            player.sendMessage(message);
 	        }	     
 	    }
+	}
+	public boolean isSign(Block b) {
+		return (b.getType().equals(Material.SIGN) || b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN));
 	}
 	public static boolean futureValid(Sign sign, String changetext, Integer line){
 		String [] newsign = sign.getLines().clone();

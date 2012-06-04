@@ -29,11 +29,12 @@ public class VersionChecker {
 			connection.setReadTimeout(15000);
 			connection.setRequestProperty("User-agent", uA);
 			bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			Pattern titleFinder = Pattern.compile("<td[^>]*><a[^>]*>(.*?)</a></td>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+			Matcher regexMatcher;
 			String str;
 			while ((str = bufferedReader.readLine()) != null) {
 				str = str.trim();
-				Pattern titleFinder = Pattern.compile("<td[^>]*><a[^>]*>(.*?)</a></td>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
-				Matcher regexMatcher = titleFinder.matcher(str);
+				regexMatcher = titleFinder.matcher(str);
 				if (regexMatcher.find()) {
 					latestVersion = regexMatcher.group(1);
 					break;
@@ -52,24 +53,24 @@ public class VersionChecker {
 	public void versionCheck() {
 		String curVersion = plugin.getDescription().getVersion();
 		if (latestVersion == null) {
-			latestVersion = getLatestVersion().toLowerCase().replace("signedit", "");
+			latestVersion = getLatestVersion().toLowerCase().replace("signedit ", "");
 		}
 		String msg = null;
 		if (latestVersion != null) {
 			int compare = curVersion.compareTo(latestVersion);
 			if (compare < 0) {
 				msg = "The version of " + plugin.getDescription().getName() + " this server is running is out of date. Latest version: " + latestVersion;
-				plugin.log.warning(msg);
+				plugin.log.warning("[SignEdit] " + msg);
 			} else if (compare == 0) {
 				msg = plugin.getDescription().getName() + " is up to date!";
-				plugin.log.info(msg);
+				plugin.log.info("[SignEdit] " + msg);
 			} else {
 				msg = "This server is running a Development version of " + plugin.getDescription().getName() + ". Expect bugs!";
-				plugin.log.warning(msg);
+				plugin.log.warning("[SignEdit] " + msg);
 			}
 		} else {
 			msg = "Error retrieving latest version from server.";
-			plugin.log.warning(msg);
+			plugin.log.warning("[SignEdit] " + msg);
 		}
 	}
 	
