@@ -35,6 +35,7 @@ public class SignEditPlayerListener implements Listener {
         Pattern.compile("[\\w : -]+")
 	};
 	
+	//Initialize parent
 	public SignEditPlayerListener(SignEdit parent) {
 		this.plugin = parent;
 	}

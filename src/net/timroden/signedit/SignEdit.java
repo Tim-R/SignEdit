@@ -74,7 +74,8 @@ public class SignEdit extends JavaPlugin {
 		}
 		log.info("[SignEdit] Disabled successfully.");
 	}
-
+	
+	//Main Function
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		Player player = null;
 		String line = "";
