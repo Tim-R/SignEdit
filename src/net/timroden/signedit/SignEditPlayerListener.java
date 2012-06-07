@@ -24,7 +24,7 @@ import com.griefcraft.model.Protection;
 public class SignEditPlayerListener implements Listener {
 	public SignEdit plugin;
 	Protection protection;
-	String[] playerLinesArray;
+	Object[] data ;
 	int line;
 	String changetext;
 	
@@ -47,13 +47,13 @@ public class SignEditPlayerListener implements Listener {
 		boolean csAccess = true;
 		boolean fbAccess = true;
 		
-		playerLinesArray = plugin.playerLines.get(p);
+		data = plugin.playerLines.get(p);
 		if((event.getClickedBlock() != null) && isSign(event.getClickedBlock())) {
 			BlockState gs = event.getClickedBlock().getState();
 			Sign sign = (Sign) gs;
 			String[] lines = sign.getLines();
 			if(event.getAction().equals(plugin.config.clickAction)) {
-				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "copy") {
+				if(plugin.playerLines.containsKey(p) && data[2] == SignFunction.COPY) {
 					if(plugin.config.useLWC) {
 						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
 					}
@@ -63,7 +63,7 @@ public class SignEditPlayerListener implements Listener {
 					}
 					if(canAccess == true || p.hasPermission("signedit.override")) {
 						plugin.clipboard.put(p, sign.getLines());
-						playerLinesArray[2]="paste";
+						data[2]="paste";
 						p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard, punch a sign to paste.");
 						
 					} else {
@@ -71,36 +71,36 @@ public class SignEditPlayerListener implements Listener {
 						sign.update();
 						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to copy that sign!");
 					}
-				}else if(plugin.clipboard.containsKey(p)&& playerLinesArray[2]== "paste") {
+				}else if(plugin.clipboard.containsKey(p)&& data[2]== SignFunction.PASTE) {
 					if(plugin.config.useLWC) {
 						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
 						p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You do not have permission to paste on that sign!");
 					}
-					if(playerLinesArray[0]==null && !(playerLinesArray[0]=="persist")){
-						if(Integer.parseInt(playerLinesArray[1]) == 0){
+					if(data[0]==null && !(data[0]=="persist")){
+						if(Integer.parseInt((String) data[1]) == 0){
 							p.sendMessage(plugin.chatPrefix + ChatColor.RED + "You are out of Copies!");
-							playerLinesArray[2]="outOfInk";
+							data[2]="outOfInk";
 						}else{
-							playerLinesArray[1]= ""+(Integer.parseInt(playerLinesArray[1])-1);
-							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign has been pasted. You have "+ playerLinesArray[1]+ " copies left.");
+							data[1]= ""+(Integer.parseInt((String) data[1])-1);
+							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign has been pasted. You have " + data[1] + " copies left.");
 						}
 					}else{
 						p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign has been pasted. Persist mode enabled.");
 					}
-					if((canAccess == true || p.hasPermission("signedit.override"))&& playerLinesArray[2]== "paste") {
+					if((canAccess == true || p.hasPermission("signedit.override"))&& data[2]== "paste") {
 						event.setCancelled(true);
-						String[] cplines = plugin.clipboard.get(p);
-						sign.setLine(0, cplines[0]);
-						sign.setLine(1, cplines[1]);
-						sign.setLine(2, cplines[2]);
-						sign.setLine(3, cplines[3]);
+						Object[] cplines = plugin.clipboard.get(p);
+						sign.setLine(0, (String) cplines[0]);
+						sign.setLine(1, (String) cplines[1]);
+						sign.setLine(2, (String) cplines[2]);
+						sign.setLine(3, (String) cplines[3]);
 						sign.update();
 					} else {
 						plugin.playerLines.remove(p);
 						sign.update();
 					}
 				}
-				if(plugin.playerLines.containsKey(p) && playerLinesArray[2] == "edit") {
+				if(plugin.playerLines.containsKey(p) && data[2] == "edit") {
 					if(plugin.config.useLWC) {
 						canAccess = plugin.performLWCCheck(p, plugin.lwc.findProtection(event.getClickedBlock()));
 					}
@@ -108,8 +108,8 @@ public class SignEditPlayerListener implements Listener {
 						event.setCancelled(true);
 					}
 					if(canAccess == true || p.hasPermission("signedit.override")) {
-						line = (Integer.parseInt(playerLinesArray[0]) - 1);
-						changetext = playerLinesArray[1];
+						line = (Integer.parseInt((String) data[0]) - 1);
+						changetext = (String) data[1];
 						if(futureValid(sign, changetext, line) && !p.hasPermission("signedit.override")) {
 							if (line == 0){
 								csAccess = false;		
@@ -132,12 +132,12 @@ public class SignEditPlayerListener implements Listener {
 									changetext = stripColourCodes(changetext);
 								}
 								if(plugin.config.logEnabled == false) {
-									plugin.log.info("[SignEdit] Sign Change: " + p.getName() + " changed sign at x:" + sign.getLocation().getBlockX() + " y:" + sign.getLocation().getBlockY() + " z:" + sign.getLocation().getBlockZ() + " in world " + p.getWorld().getName() + "; Line " + playerLinesArray[0] + " changed to \"" + changetext + "\"");
+									plugin.log.info("[SignEdit] Sign Change: " + p.getName() + " changed sign at x:" + sign.getLocation().getBlockX() + " y:" + sign.getLocation().getBlockY() + " z:" + sign.getLocation().getBlockZ() + " in world " + p.getWorld().getName() + "; Line " + data[0] + " changed to \"" + changetext + "\"");
 								} else {
 									DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 									try {
 										plugin.openFileOutput();
-										plugin.fileOutput.write("[" + dateFormat.format(new Date()) + "] " + p.getName() + " changed sign at x:" + sign.getLocation().getBlockX() + " y:" + sign.getLocation().getBlockY() + " z:" + sign.getLocation().getBlockZ() + " in world " + p.getWorld().getName() + "; Line " + playerLinesArray[0] + " changed to \"" + changetext + "\"");
+										plugin.fileOutput.write("[" + dateFormat.format(new Date()) + "] " + p.getName() + " changed sign at x:" + sign.getLocation().getBlockX() + " y:" + sign.getLocation().getBlockY() + " z:" + sign.getLocation().getBlockZ() + " in world " + p.getWorld().getName() + "; Line " + data[0] + " changed to \"" + changetext + "\"");
 										plugin.fileOutput.newLine();
 										plugin.fileOutput.close();
 									} catch (IOException e) {
