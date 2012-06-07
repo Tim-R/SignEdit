@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
-
+/* Comment testing, checking if we can do something avec GitHub */
 public class SignEdit extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
 
