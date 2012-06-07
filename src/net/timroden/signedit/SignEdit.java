@@ -34,8 +34,8 @@ public class SignEdit extends JavaPlugin {
 	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
 	
 	/* Main data HashMaps, stores all pending SignEdit "jobs" for a specific player */
-	public HashMap<Player, String[]> playerLines = new HashMap<Player, String[]>();
-	public HashMap<Player, String[]> clipboard = new HashMap<Player, String[]>();
+	public HashMap<Player, Object[]> playerLines = new HashMap<Player, Object[]>();
+	public HashMap<Player, Object[]> clipboard = new HashMap<Player, Object[]>();
 	public HashMap<Player, String> pasteAmount = new HashMap<Player, String>();	
 
 	/* Initialize our listener */
@@ -63,8 +63,7 @@ public class SignEdit extends JavaPlugin {
 	}
 
 	@Override
-	public void onDisable() {
-		
+	public void onDisable() {		
 		if(config.logEnabled) {
 			try {
 				fileOutput.close();
@@ -78,7 +77,7 @@ public class SignEdit extends JavaPlugin {
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		Player player = null;
 		String line = "";
-		String[] toPut = new String[3];
+		Object[] toPut = new Object[3];
 		if(sender instanceof Player) {
 			player = (Player) sender;
 		}	
