@@ -7,61 +7,57 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.griefcraft.lwc.LWC;
 import com.griefcraft.lwc.LWCPlugin;
 import com.griefcraft.model.Protection;
-/* Comment testing, checking if we can do something avec GitHub */
+
 public class SignEdit extends JavaPlugin {
 	public Logger log = Logger.getLogger("Minecraft");
-
-	/* Variables for logging to our log file */
 	public File logFile = null;
 	public FileWriter fstream = null;
 	public BufferedWriter fileOutput = null;
+	public PluginManager pm = null;
 
-	/* Variables for LWC integration */
 	Plugin lwcPlugin;
 	LWC lwc;
 
-	/* Prefix to show users in chat when they perform any SignEdit commands */
 	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
 	
-	/* Main data HashMaps, stores all pending SignEdit "jobs" for a specific player */
 	public HashMap<Player, Object[]> playerLines = new HashMap<Player, Object[]>();
 	public HashMap<Player, Object[]> clipboard = new HashMap<Player, Object[]>();
 	public HashMap<Player, String> pasteAmount = new HashMap<Player, String>();	
 
-	/* Initialize our listener */
 	public SignEditPlayerListener pl = new SignEditPlayerListener(this);
 
-	/* Variables for dealing with Plugin Configuration files */
-	Config config;
-	
-	/* Version Checker */
+	Config config;	
 	VersionChecker version; 
 	
 	@Override
 	public void onEnable() {
 		Long st = System.currentTimeMillis();
 		config = new Config(this);
-		version = new VersionChecker(this);
-			
+		version = new VersionChecker(this);		
 		version.versionCheck();
-		if(config.useLWC){
+		this.pm = Bukkit.getPluginManager();
+		if(config.useLWC) {
 			findLWC();
-		}
-		
+		}		
+		try {
+			Metrics metrics = new Metrics(this);
+			metrics.start();
+		} catch(IOException ignored) {}		
 		getServer().getPluginManager().registerEvents(this.pl, this);
 		log.info("[SignEdit] Enabled successfully! (" + (((System.currentTimeMillis() - st) / 1000D) % 60) + " s)");
 	}
-
 	@Override
 	public void onDisable() {		
 		if(config.logEnabled) {
@@ -73,8 +69,6 @@ public class SignEdit extends JavaPlugin {
 		}
 		log.info("[SignEdit] Disabled successfully.");
 	}
-	
-	//Main Function
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String[] args) {
 		Player player = null;
 		String line = "";
@@ -106,7 +100,7 @@ public class SignEdit extends JavaPlugin {
 							player.sendMessage(chatPrefix + ChatColor.AQUA + "Config reloaded.");
 							return true;
 						} else {
-							player.sendMessage(chatPrefix + ChatColor.RED + "You do not have permission to reload the SignEdit config!");
+							player.sendMessage(chatPrefix + ChatColor.RED + "You don't have permission to reload the SignEdit config! Missing node: signedit.admin");
 							return true;
 						}
 					}
@@ -115,6 +109,10 @@ public class SignEdit extends JavaPlugin {
 							if(playerLines.containsKey(player)) {
 								playerLines.remove(player);
 								player.sendMessage(chatPrefix + ChatColor.GREEN + "Sign change cancelled.");
+								return true;
+							} else if(clipboard.containsKey(player)) {
+								clipboard.remove(player);
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "Copy/Paste request cancelled.");
 								return true;
 							} else {
 								player.sendMessage(chatPrefix + ChatColor.RED + "You don't have any requests pending!");
@@ -126,101 +124,101 @@ public class SignEdit extends JavaPlugin {
 								pasteAmount.put(player, "1");
 							}
 							if(args.length>1){
-								if(args[1].equalsIgnoreCase("persist")){
+								if(args[1].equalsIgnoreCase("persist")) {
 									player.sendMessage(chatPrefix + ChatColor.GREEN + "Persistent copying enabled. Punch the sign you wish to add to clipboard.");
 									toPut[0] = "persist";
 									toPut[1] = null;
-									toPut[2] = "copy";
+									toPut[2] = SignFunction.COPY;
 									playerLines.put(player, toPut);
 									return true;
-								}else if(args[1].equalsIgnoreCase("default")){
-									try{
+								} else if(args[1].equalsIgnoreCase("default")) {
+									try {
 										Integer.parseInt(args[2]);
-									}catch(NumberFormatException ex) {
+									} catch(NumberFormatException ex) {
 										player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a valid number. Please enter an integer to set as your default copying amount.");
 										return true;
 									}
-									player.sendMessage(chatPrefix + ChatColor.GREEN + "Changed the default paste amount to "+args[2]);
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Changed the default paste amount to " + args[2]);
 									pasteAmount.put(player, args[2]);
 									return true;
-								}else{
-									try{
+								} else {
+									try {
 										Integer.parseInt(args[1]);
-									}catch(NumberFormatException ex) {
+									} catch(NumberFormatException ex) {
 										player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[1] + "\" is not a valid number.");
-										player.sendMessage(chatPrefix + ChatColor.GREEN + " Punch your sign to copy. Making default amount of "+pasteAmount.get(player)+" copies");
+										player.sendMessage(chatPrefix + ChatColor.GREEN + " Punch your sign to copy. Making default amount of " + pasteAmount.get(player) + " copies");
 										toPut[0] = null;
 										toPut[1] = pasteAmount.get(player);
-										toPut[2] = "copy";
+										toPut[2] = SignFunction.COPY;
 										playerLines.put(player, toPut);
 										return true;
 									}
-									player.sendMessage(chatPrefix + ChatColor.GREEN + "Punch your Sign to Copy. Making "+args[1]+" copies, /signedit paste # to extend");
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Punch your Sign to Copy. Making " + args[1] + " copies, /signedit paste # to extend");
 									toPut[0] = null;
 									toPut[1] = args[1];
-									toPut[2] = "copy";
+									toPut[2] = SignFunction.COPY;
 									playerLines.put(player, toPut);
 									return true;
 								}
-							}else{
+							} else {
 								toPut[0] = null;
 								toPut[1] = pasteAmount.get(player);
-								toPut[2] = "copy";
+								toPut[2] = SignFunction.COPY;
 								playerLines.put(player, toPut);
-								player.sendMessage(chatPrefix + ChatColor.GREEN + "Punch your sign to copy. Making default amount of "+pasteAmount.get(player)+" copies.");
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "Punch your sign to copy. Making default amount of " + pasteAmount.get(player) + " copies.");
 								return true;
 							}
 						}
-						if(args[0].equalsIgnoreCase("paste")){
-							if (!clipboard.containsKey(player)){
+						if(args[0].equalsIgnoreCase("paste")) {
+							if (!clipboard.containsKey(player)) {
 								player.sendMessage(chatPrefix + ChatColor.GREEN + "You don't have anything copied!");
 								return true;
 							}
-							if(!pasteAmount.containsKey(player)){
+							if(!pasteAmount.containsKey(player)) {
 								pasteAmount.put(player, "1");
 							}
-							if(args.length>1){
-								if(args[1].equalsIgnoreCase("persist")){
-									player.sendMessage(chatPrefix + ChatColor.GREEN + "Pasting indefinetly");
+							if(args.length>1) {
+								if(args[1].equalsIgnoreCase("persist")) {
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Pasting indefinitely");
 									toPut[0] = "persist";
 									toPut[1] = null;
-									toPut[2] = "paste";
+									toPut[2] = SignFunction.PASTE;
 									playerLines.put(player, toPut);
 									return true;
-								}else if(args[1].equalsIgnoreCase("default")){
-									try{
+								} else if(args[1].equalsIgnoreCase("default")) {
+									try {
 										Integer.parseInt(args[2]);
-									}catch(NumberFormatException ex) {
+									} catch(NumberFormatException ex) {
 										player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a valid number. Please enter an integer to set as your default copying amount.");
 										return true;
 									}
-									player.sendMessage(chatPrefix + ChatColor.GREEN + "Changed the default paste amount to "+args[2]);
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Changed the default paste amount to " + args[2]);
 									pasteAmount.put(player, args[2]);
 									return true;
-								}else{
-									try{
+								} else {
+									try {
 										Integer.parseInt(args[1]);
-									}catch(NumberFormatException ex) {
-										player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a valid number. Reloading clipboard for "+pasteAmount.get(player)+" pastes.");
+									} catch(NumberFormatException ex) {
+										player.sendMessage(chatPrefix + ChatColor.RED + "\"" + args[0] + "\" is not a valid number. Reloading clipboard for " + pasteAmount.get(player) + " pastes.");
 										toPut[0] = null;
 										toPut[1] = pasteAmount.get(player);
-										toPut[2] = "paste";
+										toPut[2] = SignFunction.PASTE;
 										playerLines.put(player, toPut);
 										return true;
 									}
-									player.sendMessage(chatPrefix + ChatColor.GREEN + "Reloading clipboard for "+args[1]+" pastes.");
+									player.sendMessage(chatPrefix + ChatColor.GREEN + "Reloading clipboard for " + args[1] + " pastes.");
 									toPut[0] = null;
 									toPut[1] = args[1];
-									toPut[2] = "paste";
+									toPut[2] = SignFunction.PASTE;
 									playerLines.put(player, toPut);
 									return true;
 								}
-							}else{
+							} else {
 								toPut[0] = null;
 								toPut[1] = pasteAmount.get(player);
-								toPut[2] = "paste";
+								toPut[2] = SignFunction.PASTE;
 								playerLines.put(player, toPut);
-								player.sendMessage(chatPrefix + ChatColor.GREEN + "Making default amount of:  "+pasteAmount.get(player)+" pastes.");
+								player.sendMessage(chatPrefix + ChatColor.GREEN + "Making default amount of: " + pasteAmount.get(player) + " pastes.");
 								return true;
 							}
 							
@@ -242,7 +240,7 @@ public class SignEdit extends JavaPlugin {
 							if(stripColourCodes(line).length() <= 15) {
 								toPut[0] = args[0];
 								toPut[1] = line;
-								toPut[2] = "edit";
+								toPut[2] = SignFunction.EDIT;
 								playerLines.put(player, toPut);
 								player.sendMessage(chatPrefix + ChatColor.GREEN + "Text saved. Punch a sign to complete your changes.");
 								return true;
@@ -255,7 +253,7 @@ public class SignEdit extends JavaPlugin {
 							return true;
 						}
 					} else {
-						player.sendMessage(chatPrefix + ChatColor.RED + "You do not have permission to use SignEdit!");
+						player.sendMessage(chatPrefix + ChatColor.RED + "You don't have permission to use SignEdit! Missing node: signedit.edit");
 						return true;
 					}
 				} else {

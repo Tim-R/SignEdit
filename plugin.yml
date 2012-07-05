@@ -1,7 +1,8 @@
 name: SignEdit
 version: 1.9
 description: Ever made a mistake on a sign, and not wanted to take the sign down to fix it? Now you don't have to!
-author: Timr, ThundrRok
+author: Timroden
+authors: [ThundrRok, Cyprias]
 website: http://dev.timroden.net/
 main: net.timroden.signedit.SignEdit
 database: false
@@ -15,7 +16,7 @@ permissions:
         description: Allows you to use /signedit
         default: false       
     signedit.override:
-        description: Allows users to override LWC's protections.
+        description: Allows users to override protections.
         default: op
         children:
             signedit.edit: true
@@ -24,7 +25,7 @@ permissions:
         description: Allows you to admin SignEdit
         default: op
     signedit.notify:
-        description: Notifies anyone with this permission when a sign edit event happens
+        description: Notifies anyone with this when a SignEdit event occurs
         default: false       
         children: 
             signedit.edit: true

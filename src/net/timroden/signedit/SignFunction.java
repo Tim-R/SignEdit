@@ -3,7 +3,8 @@ package net.timroden.signedit;
 public enum SignFunction {
 	EDIT(0),
 	COPY(1),
-	PASTE(2);
+	PASTE(2),
+	OUTOFINK(3);
 	
 	private int type;
 	private SignFunction(int i) {

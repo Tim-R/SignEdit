@@ -13,7 +13,7 @@ Permissions:
     - signedit.override - Allows users (defaults to OPs) to protection
     
 Change log:
-    1.9: Add preliminary code for new handling of methods, add a new config option for inverting mouse, optimize some code
+    1.9: Major changes to editing, should work with most plugins that listen for Sign change Events (ChestShop, Minecart Revolution, etc.)
 	1.8.1: Fixed a line
     1.8: Added /signedit reload, version checker
 	1.7: Added /signedit paste and revamped the copy/paste system

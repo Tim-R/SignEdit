@@ -1,7 +1,10 @@
 signedit:
     uselwc: false
+    
     ignorecreative: true
+    
     invertmouse: false
+    
     log:
         enabled: false
         filename: signedit.log
