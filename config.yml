@@ -8,3 +8,5 @@ signedit:
     log:
         enabled: false
         filename: signedit.log
+        
+    notifyversion: true

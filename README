@@ -5,14 +5,15 @@ Commands:
     - /signedit cancel - Cancel the current edit
     - /signedit help - Display a help dialogue
     - /signedit copy <parameters> - copy a sign a number of times; choose a #, persist (infinite), or take the default
-    - /signedit paste <parameters> - reload your clipboard for more pasting
-    - /signedit reload - reloads SignEdit config
+    - /signedit reload - reloads SignEdit configuration file
 
 Permissions:
     - signedit.edit - Allows users to edit their own signs, and any signs they can access through LWC (If support is enabled)
     - signedit.override - Allows users (defaults to OPs) to protection
+    - signedit.notify - Notify people with this permission of a new version.
     
 Change log:
+    2.0: Major code cleanups, major bug fixes, major everything. I like cats. Oh, we also removed /signedit paste. It was redundant.
     1.9: Major changes to editing, should work with most plugins that listen for Sign change Events (ChestShop, Minecart Revolution, etc.)
 	1.8.1: Fixed a line
     1.8: Added /signedit reload, version checker

@@ -11,11 +11,14 @@ import java.util.regex.Pattern;
 public class VersionChecker {
 	public SignEdit plugin;
 	
+	public boolean isLatestVersion = true;
+	public String versionMessage = null;
+	
 	public VersionChecker(SignEdit plugin) {
 		this.plugin = plugin;
 	}	
 	
-	public String getLatestVersion() {
+	public String getLatestVersion() {		
 		String latestVersion = null;
 		String uA = plugin.getDescription().getName() + " " + plugin.getDescription().getVersion();
 		final String address = "http://dev.bukkit.org/server-mods/signedit/files/";
@@ -60,16 +63,20 @@ public class VersionChecker {
 			int compare = curVersion.compareTo(latestVersion);
 			if (compare < 0) {
 				msg = "The version of " + plugin.getDescription().getName() + " this server is running is out of date. Latest version: " + latestVersion;
+				isLatestVersion = false;
+				versionMessage = msg + " You can download the latest version at http://dev.bukkit.org/server-mods/signedit/files/";
 				plugin.log.warning("[SignEdit] " + msg);
 			} else if (compare == 0) {
 				msg = plugin.getDescription().getName() + " is up to date!";
 				plugin.log.info("[SignEdit] " + msg);
 			} else {
 				msg = "This server is running a Development version of " + plugin.getDescription().getName() + ". Expect bugs!";
+				isLatestVersion = false;
+				versionMessage = msg;
 				plugin.log.warning("[SignEdit] " + msg);
 			}
 		} else {
-			msg = "Error retrieving latest version from server.";
+			msg = "Error retrieving latest version from BukkitDev.";
 			plugin.log.warning("[SignEdit] " + msg);
 		}
 	}
