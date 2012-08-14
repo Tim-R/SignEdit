@@ -1,12 +1,13 @@
-signedit:
-    uselwc: false
-    
+signedit:    
     ignorecreative: true
     
     invertmouse: false
     
     log:
-        enabled: false
         filename: signedit.log
         
-    notifyversion: true
+    commands:
+        logtofile: false
+        logtoconsole: true  
+        
+    notifyversion: true 

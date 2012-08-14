@@ -1,5 +1,5 @@
 name: SignEdit
-version: 2.0
+version: 2.1
 description: Ever made a mistake on a sign, and not wanted to take the sign down to fix it? Now you don't have to!
 author: Timroden
 authors: [ThundrRok, Cyprias]
@@ -24,7 +24,7 @@ permissions:
         description: Allows you to admin SignEdit
         default: op
     signedit.notify:
-        description: Notifies anyone with this when a SignEdit event occurs
-        default: false       
+        description: Notifies anyone with this when a SignEdit update is available
+        default: op     
         children: 
             signedit.edit: true

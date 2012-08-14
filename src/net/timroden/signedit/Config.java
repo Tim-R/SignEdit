@@ -7,7 +7,7 @@ public class Config {
 	private SignEdit plugin;
 	private static Configuration config;
 	
-	public boolean useLWC, ignoreCreative, logEnabled, invertMouse, notifyOnVersion;
+	public boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile;
 	public Action clickAction;
 	public String logName, clickActionStr;
 	
@@ -28,13 +28,12 @@ public class Config {
 	}
 	
 	public void getOpts() {
-		useLWC = config.getBoolean("signedit.uselwc");
 		ignoreCreative = config.getBoolean("signedit.ignorecreative");
-		logEnabled = config.getBoolean("signedit.log.enabled");
 		logName = config.getString("signedit.log.filename");
 		invertMouse = config.getBoolean("signedit.invertmouse");
 		notifyOnVersion = config.getBoolean("signedit.notifyversion");
-		
+		commandsLogConsole = config.getBoolean("signedit.commands.logtoconsole");
+		commandsLogFile = config.getBoolean("signedit.commands.logtofile");
 		
 		if(invertMouse) {
 			clickAction = Action.RIGHT_CLICK_BLOCK;
