@@ -50,14 +50,13 @@ public class VersionChecker {
 		}
 		return latestVersion;
 	}
-
-	String latestVersion = null;
+	
+	
 	
 	public void versionCheck() {
 		String curVersion = plugin.getDescription().getVersion();
-		if (latestVersion == null) {
-			latestVersion = getLatestVersion().toLowerCase().replace("signedit ", "");
-		}
+		String latestVersion = getLatestVersion().toLowerCase().replace("signedit ", "");
+		
 		String msg = null;
 		if (latestVersion != null) {
 			int compare = curVersion.compareTo(latestVersion);

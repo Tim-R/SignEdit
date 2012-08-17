@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
+
+import net.timroden.signedit.utils.Utils;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -37,6 +40,7 @@ public class SignEdit extends JavaPlugin {
 
 	Config config;	
 	VersionChecker version; 
+	Utils utils;
 	
 	@Override
 	public void onEnable() {
@@ -45,11 +49,14 @@ public class SignEdit extends JavaPlugin {
 		version = new VersionChecker(this);		
 		version.versionCheck();
 		pl = new SignEditPlayerListener(this);
+		utils = new Utils(this);
 		this.pm = Bukkit.getPluginManager();
 		try {
 			Metrics metrics = new Metrics(this);
 			metrics.start();
-		} catch(IOException ignored) {}		
+		} catch (IOException e) {
+			log.severe("[SignEdit] Error enabling metrics");
+		}
 		getServer().getPluginManager().registerEvents(this.pl, this);
 		log.info("[SignEdit] Enabled successfully! (" + (((System.currentTimeMillis() - st) / 1000D) % 60) + "s)");
 	}
@@ -180,7 +187,7 @@ public class SignEdit extends JavaPlugin {
 								return true;	
 							}
 							if(args.length >= 2) {
-								line = implodeArray(args, " ", 1, args.length);
+								line = utils.implode(args, " ", 1, args.length);
 							}
 							logAll("[PLAYER_COMMAND] " + player.getName() + ": /signedit " + args[0] + " " + line);
 							if(line.length() <= 15) {
@@ -246,17 +253,6 @@ public class SignEdit extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
-	public static String implodeArray(String[] inputArray, String glueString, int start, int end) {
-		StringBuilder sb = new StringBuilder();
-		if (inputArray.length > 0) {
-			sb.append(inputArray[start]);
-			for (int i = (start + 1); i<inputArray.length; i++) {
-				sb.append(glueString);
-				sb.append(inputArray[i]);
-			}
-		}
-		return sb.toString();
-	}
 	public void openFileOutput() {
 		try	{
 			logFile = new File(getDataFolder(), config.logName);
@@ -269,7 +265,4 @@ public class SignEdit extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
-    public static String stripColourCodes(String string) {
-    	return string.replaceAll("&[0-9a-fA-Fk-oK-OrR]", "");        
-    }
 }

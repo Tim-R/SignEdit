@@ -9,10 +9,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
+
+import net.timroden.signedit.utils.Utils;
 
 public class SignEditPlayerListener implements Listener {
 	public SignEdit plugin;
@@ -20,8 +21,11 @@ public class SignEditPlayerListener implements Listener {
 	int line;
 	String changetext;
 	
+	Utils utils;
+	
 	public SignEditPlayerListener(SignEdit parent) {
 		this.plugin = parent;
+		utils = new Utils(parent);
 	}
 	
 	@EventHandler
@@ -43,7 +47,7 @@ public class SignEditPlayerListener implements Listener {
 		} else {
 			return;
 		}
-		if((b != null) && isSign(b)) {
+		if((b != null) && utils.isSign(b)) {
 			BlockState gs = event.getClickedBlock().getState();
 		
 			Sign sign = (Sign) gs;
@@ -55,7 +59,7 @@ public class SignEditPlayerListener implements Listener {
 						sign.update();
 					}	
 					plugin.clipboard.put(p, sign.getLines());
-					plugin.playerFunction.put(p, SignFunction.PASTE);
+					plugin.playerFunction.put(p, SignFunction.PASTE);	
 					p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard, " + plugin.config.clickActionStr + " a sign to paste.");						
 				} else if(f.equals(SignFunction.PASTE)) {
 					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.ignoreCreative) {
@@ -94,36 +98,38 @@ public class SignEditPlayerListener implements Listener {
 						event.setCancelled(true);
 						sign.update();
 					}
-					String originalLine = stripColourCodes(sign.getLine(line));
+					String originalLine = utils.stripColourCodes(sign.getLine(line));
 					line = (Integer.parseInt((String) data[0]) - 1);
 					changetext = (String) data[1];
 					
-					if(changetext == "") {
+					if(changetext.equals("")) {
 						sign.setLine(line, "");
-						changetext = stripColourCodes(changetext);
+						changetext = utils.stripColourCodes(changetext);
 						p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line deleted.");
 					} else {
 						sign.setLine(line, ChatColor.translateAlternateColorCodes('&', changetext));
-						changetext = stripColourCodes(changetext);
+						changetext = utils.stripColourCodes(changetext);
 						p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
 					}											
 					plugin.logAll(p.getName() + ": (x:" + sign.getLocation().getBlockX() + ", y:" + sign.getLocation().getBlockY() + ", z:" + sign.getLocation().getBlockZ() + ", " + p.getWorld().getName() + ") \"" + originalLine + "\" changed to \"" + changetext + "\"");
 					sign.update();
-					throwSignChange(b, p, sign.getLines());
+					utils.throwSignChange(b, p, sign.getLines());
 					plugin.playerLines.remove(p); 
 					plugin.playerFunction.remove(p);
 				}
 			} 
 		}
-	}	
-	public boolean isSign(Block b) {
-		return (b.getType().equals(Material.SIGN) || b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN));
-	} 
-    public static String stripColourCodes(String string) {
-    	return string.replaceAll("&[0-9a-fA-Fk-oK-OrR]", "");        
-    }    
-    public void throwSignChange(final Block theBlock, final Player thePlayer, final String[] theLines) {
-    	SignChangeEvent event = new SignChangeEvent(theBlock, thePlayer, theLines);
-    	this.plugin.pm.callEvent(event);    	
-    }
+	}
+	
+	@EventHandler	
+	public void onSignChange(SignChangeEvent e) {
+		if(plugin.config.colorsOnPlace) {
+			String[] lines = e.getLines();		
+			for(int i = 0; i < 4; i++) {
+				String line = lines[i];
+				line = ChatColor.translateAlternateColorCodes('&', line);
+				e.setLine(i, line);
+			}	
+		}
+	}
 }

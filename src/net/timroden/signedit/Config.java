@@ -7,7 +7,7 @@ public class Config {
 	private SignEdit plugin;
 	private static Configuration config;
 	
-	public boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile;
+	public boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile, colorsOnPlace;
 	public Action clickAction;
 	public String logName, clickActionStr;
 	
@@ -34,6 +34,7 @@ public class Config {
 		notifyOnVersion = config.getBoolean("signedit.notifyversion");
 		commandsLogConsole = config.getBoolean("signedit.commands.logtoconsole");
 		commandsLogFile = config.getBoolean("signedit.commands.logtofile");
+		colorsOnPlace = config.getBoolean("signedit.colorsonplace");
 		
 		if(invertMouse) {
 			clickAction = Action.RIGHT_CLICK_BLOCK;
