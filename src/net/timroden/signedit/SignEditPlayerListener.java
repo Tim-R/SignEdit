@@ -20,22 +20,27 @@ public class SignEditPlayerListener implements Listener {
 	Object[] data;
 	int line;
 	String changetext;
-	
+
 	Utils utils;
-	
+
 	public SignEditPlayerListener(SignEdit parent) {
 		this.plugin = parent;
 		utils = new Utils(parent);
 	}
-	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		Player p = event.getPlayer();
-		if(p.isPermissionSet("signedit.notify") && plugin.config.notifyOnVersion) 
-			if(!plugin.version.isLatestVersion) 
-				p.sendMessage(plugin.chatPrefix + ChatColor.DARK_PURPLE + plugin.version.versionMessage);
+		final Player p = event.getPlayer();
+		if(p.isPermissionSet("signedit.notify") && plugin.config.notifyOnVersion) { 
+			if(!plugin.version.isLatestVersion) {
+				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					public void run() {
+						p.sendMessage(plugin.chatPrefix + ChatColor.DARK_PURPLE + plugin.version.versionMessage);
+					}
+				}, 1L);
+			}
+		}
 	}
-	
+
 	@EventHandler(priority = EventPriority.HIGHEST)
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player p = event.getPlayer();
@@ -49,9 +54,9 @@ public class SignEditPlayerListener implements Listener {
 		}
 		if((b != null) && utils.isSign(b)) {
 			BlockState gs = event.getClickedBlock().getState();
-		
+
 			Sign sign = (Sign) gs;
-		
+
 			if(event.getAction().equals(plugin.config.clickAction)) {
 				if(f.equals(SignFunction.COPY)) {
 					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.ignoreCreative) {
@@ -101,7 +106,7 @@ public class SignEditPlayerListener implements Listener {
 					String originalLine = utils.stripColourCodes(sign.getLine(line));
 					line = (Integer.parseInt((String) data[0]) - 1);
 					changetext = (String) data[1];
-					
+
 					if(changetext.equals("")) {
 						sign.setLine(line, "");
 						changetext = utils.stripColourCodes(changetext);
@@ -120,7 +125,7 @@ public class SignEditPlayerListener implements Listener {
 			} 
 		}
 	}
-	
+
 	@EventHandler	
 	public void onSignChange(SignChangeEvent e) {
 		if(plugin.config.colorsOnPlace) {

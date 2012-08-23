@@ -11,3 +11,5 @@ signedit:
         logtoconsole: true  
         
     notifyversion: true 
+    
+    colorsonplace: true

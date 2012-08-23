@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-
 import net.timroden.signedit.utils.Utils;
 
 import org.bukkit.Bukkit;
@@ -29,27 +28,30 @@ public class SignEdit extends JavaPlugin {
 	public PluginManager pm = null;
 
 	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
-	
+
 	public HashMap<Player, Object[]> playerLines = new HashMap<Player, Object[]>();
 	public HashMap<Player, String[]> clipboard = new HashMap<Player, String[]>();
 	public HashMap<Player, SignFunction> playerFunction = new HashMap<Player, SignFunction>();
-	public HashMap<Player, Integer> pasteAmount = new HashMap<Player, Integer>();	
+	public HashMap<String, Integer> pasteAmount = new HashMap<String, Integer>();	
 	public SignEditPlayerListener pl = null;
-	
+
 	DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
 	Config config;	
 	VersionChecker version; 
 	Utils utils;
-	
+
 	@Override
 	public void onEnable() {
 		Long st = System.currentTimeMillis();
+
 		config = new Config(this);
-		version = new VersionChecker(this);		
-		version.versionCheck();
+		version = new VersionChecker(this);				
 		pl = new SignEditPlayerListener(this);
 		utils = new Utils(this);
+
+		version.start();
+		
 		this.pm = Bukkit.getPluginManager();
 		try {
 			Metrics metrics = new Metrics(this);
@@ -123,7 +125,7 @@ public class SignEdit extends JavaPlugin {
 						}
 						if(args[0].equalsIgnoreCase("copy")) {
 							if(!pasteAmount.containsKey(player)) {
-								pasteAmount.put(player, 1);
+								pasteAmount.put(player.getName(), 1);
 							}
 							if(args.length>1){
 								if(args[1].equalsIgnoreCase("persist")) {
@@ -143,7 +145,7 @@ public class SignEdit extends JavaPlugin {
 									}
 									logAll("[PLAYER_COMMAND] " + player.getName() + ": /signedit default " + args[2]);
 									player.sendMessage(chatPrefix + ChatColor.GREEN + "Changed the default paste amount to " + args[2]);
-									pasteAmount.put(player, Integer.parseInt(args[2]));
+									pasteAmount.put(player.getName(), Integer.parseInt(args[2]));
 									return true;
 								} else {
 									logAll("[PLAYER_COMMAND] " + player.getName() + ": /signedit copy " + args[1]);
@@ -168,10 +170,10 @@ public class SignEdit extends JavaPlugin {
 							} else {
 								logAll("[PLAYER_COMMAND] " + player.getName() + ": /signedit copy");
 								toPut[0] = null;
-								toPut[1] = pasteAmount.get(player);
+								toPut[1] = pasteAmount.get(player.getName());
 								playerFunction.put(player, SignFunction.COPY);
 								playerLines.put(player, toPut);
-								player.sendMessage(chatPrefix + ChatColor.GREEN + config.clickActionStr + " your sign to copy. Making default amount of " + pasteAmount.get(player) + " copies.");
+								player.sendMessage(chatPrefix + ChatColor.GREEN + config.clickActionStr + " your sign to copy. Making default amount of " + pasteAmount.get(player.getName()) + " copies.");
 								return true;
 							}
 						}
@@ -220,7 +222,7 @@ public class SignEdit extends JavaPlugin {
 		}
 		return false;	
 	}
-	
+
 	public void showHelp(CommandSender sender) {
 		sender.sendMessage(chatPrefix + ChatColor.GREEN + "Available commands:");
 		if(sender instanceof Player) {
@@ -239,7 +241,7 @@ public class SignEdit extends JavaPlugin {
 	public void logAll(String message) {
 		if(config.commandsLogFile)
 			logToFile("[" + dateFormat.format(new Date()) + "] " + message);
-		
+
 		if(config.commandsLogConsole)
 			log.info(message);
 	}

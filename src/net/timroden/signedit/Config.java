@@ -6,27 +6,27 @@ import org.bukkit.event.block.Action;
 public class Config {
 	private SignEdit plugin;
 	private static Configuration config;
-	
+
 	public boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile, colorsOnPlace;
 	public Action clickAction;
 	public String logName, clickActionStr;
-	
+
 	public Config(SignEdit plugin) {
 		this.plugin = plugin;
 		config = plugin.getConfig().getRoot();
 		config.options().copyDefaults(true);
 		plugin.saveConfig();
-		
+
 		getOpts();
 	}
-	
+
 	public void reload() {
 		plugin.reloadConfig();
 		config = plugin.getConfig().getRoot();
-		
+
 		getOpts();
 	}
-	
+
 	public void getOpts() {
 		ignoreCreative = config.getBoolean("signedit.ignorecreative");
 		logName = config.getString("signedit.log.filename");
@@ -35,7 +35,7 @@ public class Config {
 		commandsLogConsole = config.getBoolean("signedit.commands.logtoconsole");
 		commandsLogFile = config.getBoolean("signedit.commands.logtofile");
 		colorsOnPlace = config.getBoolean("signedit.colorsonplace");
-		
+
 		if(invertMouse) {
 			clickAction = Action.RIGHT_CLICK_BLOCK;
 			clickActionStr = "right click";

@@ -5,23 +5,33 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class VersionChecker {
-	public SignEdit plugin;
+import org.bukkit.plugin.Plugin;
+
+public class VersionChecker extends Thread {
+	public Plugin plugin;
 	
+	public String address = "http://dev.bukkit.org/server-mods/signedit/files/";
+
 	public boolean isLatestVersion = true;
-	public String versionMessage = null;
+	public String versionMessage;
+	public String pName;
+	public String latestVersion = null;
 	
-	public VersionChecker(SignEdit plugin) {
+	private Logger log;
+	
+
+	public VersionChecker(Plugin plugin) {
 		this.plugin = plugin;
+		log = plugin.getLogger();
+		pName = plugin.getDescription().getName();	
 	}	
 	
-	public String getLatestVersion() {		
-		String latestVersion = null;
+	public void run() {
 		String uA = plugin.getDescription().getName() + " " + plugin.getDescription().getVersion();
-		final String address = "http://dev.bukkit.org/server-mods/signedit/files/";
 		final URL url;
 		URLConnection connection = null;
 		BufferedReader bufferedReader = null;
@@ -39,7 +49,7 @@ public class VersionChecker {
 				str = str.trim();
 				regexMatcher = titleFinder.matcher(str);
 				if (regexMatcher.find()) {
-					latestVersion = regexMatcher.group(1);
+					latestVersion = regexMatcher.group(1).toLowerCase().replace("signedit ", "");
 					break;
 				}
 			}
@@ -48,39 +58,27 @@ public class VersionChecker {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		return latestVersion;
-	}
-	
-	
-	
-	public void versionCheck() {
-		String curVersion = plugin.getDescription().getVersion();
-		String latestVersion = getLatestVersion().toLowerCase().replace("signedit ", "");
-		
+
 		String msg = null;
 		if (latestVersion != null) {
-			int compare = curVersion.compareTo(latestVersion);
+			int compare = plugin.getDescription().getVersion().compareTo(latestVersion);
 			if (compare < 0) {
-				msg = "The version of " + plugin.getDescription().getName() + " this server is running is out of date. Latest version: " + latestVersion;
+				msg = "The version of " + pName + " this server is running is out of date. Latest version: " + latestVersion;
 				isLatestVersion = false;
-				versionMessage = msg + " You can download the latest version at http://dev.bukkit.org/server-mods/signedit/files/";
-				plugin.log.warning("[SignEdit] " + msg);
-			} else if (compare == 0) {
+				versionMessage = msg + " You can download the latest version at " + address;
+				log.warning(msg);
+			} else if (compare == 0) { 
 				msg = plugin.getDescription().getName() + " is up to date!";
-				plugin.log.info("[SignEdit] " + msg);
+				log.info(msg);
 			} else {
-				msg = "This server is running a Development version of " + plugin.getDescription().getName() + ". Expect bugs!";
+				msg = "This server is running a Development version of " + pName + ". Expect bugs!";
 				isLatestVersion = false;
 				versionMessage = msg;
-				plugin.log.warning("[SignEdit] " + msg);
+				log.warning(msg);
 			}
 		} else {
 			msg = "Error retrieving latest version from BukkitDev.";
-			plugin.log.warning("[SignEdit] " + msg);
+			log.warning(msg);
 		}
-	}
-	
-	public static double getUnixTime() {
-		return System.currentTimeMillis() / 1000D;
 	}
 }
