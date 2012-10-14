@@ -12,4 +12,6 @@ signedit:
         
     notifyversion: true 
     
-    colorsonplace: true
+    colorsonplace: 
+        enabled: true
+        usepermission: false

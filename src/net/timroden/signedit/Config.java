@@ -3,18 +3,18 @@ package net.timroden.signedit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.event.block.Action;
 
-public class Config {
+public class Config {	
 	private SignEdit plugin;
 	private static Configuration config;
 
-	public boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile, colorsOnPlace;
-	public Action clickAction;
-	public String logName, clickActionStr;
+	private boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile, colorsOnPlace, useCOPPerm;
+	private Action clickAction;
+	private String logName, clickActionStr;
 
 	public Config(SignEdit plugin) {
-		this.plugin = plugin;
-		config = plugin.getConfig().getRoot();
-		config.options().copyDefaults(true);
+		this.plugin = plugin;		
+		config = plugin.getConfig().options().configuration();		
+		config.options().copyDefaults(true);		
 		plugin.saveConfig();
 
 		getOpts();
@@ -22,7 +22,9 @@ public class Config {
 
 	public void reload() {
 		plugin.reloadConfig();
-		config = plugin.getConfig().getRoot();
+		config = plugin.getConfig().options().configuration();		
+		config.options().copyDefaults(true);		
+		plugin.saveConfig();
 
 		getOpts();
 	}
@@ -34,8 +36,9 @@ public class Config {
 		notifyOnVersion = config.getBoolean("signedit.notifyversion");
 		commandsLogConsole = config.getBoolean("signedit.commands.logtoconsole");
 		commandsLogFile = config.getBoolean("signedit.commands.logtofile");
-		colorsOnPlace = config.getBoolean("signedit.colorsonplace");
-
+		colorsOnPlace = config.getBoolean("signedit.colorsonplace.enabled");
+		useCOPPerm = config.getBoolean("signedit.colorsonplace.usepermission");
+		
 		if(invertMouse) {
 			clickAction = Action.RIGHT_CLICK_BLOCK;
 			clickActionStr = "right click";
@@ -43,5 +46,45 @@ public class Config {
 			clickAction = Action.LEFT_CLICK_BLOCK;
 			clickActionStr = "left click";
 		}
+	}
+	
+	public boolean ignoreCreative() {
+		return this.ignoreCreative;
+	}
+	
+	public Action clickAction() {
+		return this.clickAction;
+	}
+	
+	public String logName() {
+		return this.logName;
+	}
+	
+	public boolean notifyVersionUpdate() {
+		return this.notifyOnVersion;
+	}
+	
+	public boolean commandsLogConsole() {
+		return this.commandsLogConsole;
+	}
+	
+	public boolean commandsLogFile() {
+		return this.commandsLogFile;
+	}
+	
+	public boolean colorsOnPlace() {
+		return this.colorsOnPlace;
+	}
+	
+	public boolean useCOPPermission() {
+		return this.useCOPPerm;
+	}
+	
+	public String clickActionStr() {
+		return this.clickActionStr;
+	}
+	
+	public boolean invertMouse() {
+		return this.invertMouse;
 	}
 }

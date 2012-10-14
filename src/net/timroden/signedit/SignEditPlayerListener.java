@@ -1,140 +1,148 @@
 package net.timroden.signedit;
 
+import net.timroden.signedit.data.SignEditDataPackage;
+import net.timroden.signedit.data.SignFunction;
+import net.timroden.signedit.data.LogType;
+import net.timroden.signedit.utils.SignEditUtils;
+
+import org.bukkit.ChatColor;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 
-import net.timroden.signedit.utils.Utils;
-
 public class SignEditPlayerListener implements Listener {
-	public SignEdit plugin;
-	Object[] data;
-	int line;
-	String changetext;
+	private SignEdit plugin;
+	private SignEditUtils utils;
 
-	Utils utils;
-
-	public SignEditPlayerListener(SignEdit parent) {
-		this.plugin = parent;
-		utils = new Utils(parent);
+	public SignEditPlayerListener(SignEdit plugin) {
+		this.plugin = plugin;
+		this.utils = plugin.utils;
 	}
+
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		final Player p = event.getPlayer();
-		if(p.isPermissionSet("signedit.notify") && plugin.config.notifyOnVersion) { 
-			if(!plugin.version.isLatestVersion) {
+		final Player player = event.getPlayer();
+
+		if(plugin.config.notifyVersionUpdate() && player.isPermissionSet("signedit.notify")) {
+			if(!plugin.version.isLatestVersion()) {
 				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+					@Override
 					public void run() {
-						p.sendMessage(plugin.chatPrefix + ChatColor.DARK_PURPLE + plugin.version.versionMessage);
+						player.sendMessage(plugin.chatPrefix + ChatColor.DARK_PURPLE + plugin.version.getVersionMessage());
 					}
 				}, 1L);
 			}
 		}
+
 	}
 
-	@EventHandler(priority = EventPriority.HIGHEST)
+	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
-		Player p = event.getPlayer();
-		Block b = event.getClickedBlock();
-		data = plugin.playerLines.get(p);
-		SignFunction f;
-		if(plugin.playerFunction.containsKey(p)) {
-			f = plugin.playerFunction.get(p);
-		} else {
+		Player player = event.getPlayer();
+		Block block = event.getClickedBlock();
+		SignEditDataPackage dataPack = null;
+		if(!event.getAction().equals(plugin.config.clickAction())) {
 			return;
 		}
-		if((b != null) && utils.isSign(b)) {
-			BlockState gs = event.getClickedBlock().getState();
+		if(!plugin.playerData.containsKey(player.getName())) {
+			return;
+		}				
+		if(block == null || !utils.isSign(block)) {
+			return;
+		}
+		Sign sign = (Sign) block.getState();
+		dataPack = plugin.playerData.get(player.getName());
 
-			Sign sign = (Sign) gs;
+		SignFunction function = dataPack.getFunction();
 
-			if(event.getAction().equals(plugin.config.clickAction)) {
-				if(f.equals(SignFunction.COPY)) {
-					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.ignoreCreative) {
-						event.setCancelled(true);
-						sign.update();
-					}	
-					plugin.clipboard.put(p, sign.getLines());
-					plugin.playerFunction.put(p, SignFunction.PASTE);	
-					p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard, " + plugin.config.clickActionStr + " a sign to paste.");						
-				} else if(f.equals(SignFunction.PASTE)) {
-					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.ignoreCreative) {
-						event.setCancelled(true);
-						sign.update();
-					}
-					String[] cplines = plugin.clipboard.get(p);
-					sign.setLine(0, cplines[0]);
-					sign.setLine(1, cplines[1]);
-					sign.setLine(2, cplines[2]);
-					sign.setLine(3, cplines[3]);
-					sign.update();
-					if(data[0] == null && data[0] != "persist") {
-						if(data[1] instanceof Integer) {
-							data[1] = ((Integer) data[1] - 1);
-						} else if(data[1] instanceof String) {
-							data[1] = (Integer.parseInt((String) data[1]) - 1);
-						}								
-						if((Integer) data[1] == 0) {
-							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign pasted." + ChatColor.RED + " You are out of Copies!");
-							plugin.clipboard.remove(p);
-							plugin.playerLines.remove(p);
-							plugin.playerFunction.remove(p);
-						} else {
-							String cStr = "copies";
-							if((Integer) data[1] == 1) {
-								cStr = "copy";
-							} 
-							p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign pasted. You have " + data[1] + " " + cStr + " left.");
-						}
-					} else {
-						p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign pasted. \u221E copies left.");
-					}
-				} else if(f.equals(SignFunction.EDIT)) {
-					if(p.getGameMode().equals(GameMode.CREATIVE) && plugin.config.ignoreCreative) {
-						event.setCancelled(true);
-						sign.update();
-					}
-					String originalLine = utils.stripColourCodes(sign.getLine(line));
-					line = (Integer.parseInt((String) data[0]) - 1);
-					changetext = (String) data[1];
+		if(function.equals(SignFunction.COPY)) {
+			if(utils.shouldCancel(player)) {
+				event.setCancelled(true);
+				sign.update();
+			}
+			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), sign.getLines(), dataPack.getAmount(), SignFunction.PASTE);
+			plugin.playerData.put(player.getName(), tmp);
+			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard, Punch a sign to paste.");	
+		} else if(function.equals(SignFunction.COPYPERSIST)) {
+			if(utils.shouldCancel(player)) {
+				event.setCancelled(true);
+				sign.update();
+			}
+			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.PASTEPERSIST, sign.getLines());
+			plugin.playerData.put(player.getName(), tmp);
+			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard, Punch a sign to paste.");
+		} else if(function.equals(SignFunction.PASTE)) {
+			if(utils.shouldCancel(player)) {
+				event.setCancelled(true);
+			}
+			String[] lines = dataPack.getLines();
 
-					if(changetext.equals("")) {
-						sign.setLine(line, "");
-						changetext = utils.stripColourCodes(changetext);
-						p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line deleted.");
-					} else {
-						sign.setLine(line, ChatColor.translateAlternateColorCodes('&', changetext));
-						changetext = utils.stripColourCodes(changetext);
-						p.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
-					}											
-					plugin.logAll(p.getName() + ": (x:" + sign.getLocation().getBlockX() + ", y:" + sign.getLocation().getBlockY() + ", z:" + sign.getLocation().getBlockZ() + ", " + p.getWorld().getName() + ") \"" + originalLine + "\" changed to \"" + changetext + "\"");
-					sign.update();
-					utils.throwSignChange(b, p, sign.getLines());
-					plugin.playerLines.remove(p); 
-					plugin.playerFunction.remove(p);
-				}
-			} 
+			for(int i = 0; i < lines.length; i++) {
+				sign.setLine(i, lines[i]);
+			}
+			sign.update();
+
+			int amount = dataPack.getAmount();
+
+			if(--amount == 0) {
+				utils.throwSignChange(block, player, sign.getLines());
+				player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign pasted." + ChatColor.RED + " You are out of Copies!");
+				plugin.playerData.remove(player.getName());
+				return;
+			}
+			utils.throwSignChange(block, player, sign.getLines());
+			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), lines, amount, SignFunction.PASTE);
+			plugin.playerData.put(player.getName(), tmp);
+			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign pasted. You have " + amount + " " + (amount == 1 ? "copy" : "copies") + " left.");
+		} else if(function.equals(SignFunction.PASTEPERSIST)) {
+			if(utils.shouldCancel(player)) {
+				event.setCancelled(true);
+			}
+			String[] lines = dataPack.getLines();
+
+			for(int i = 0; i < lines.length; i++) {
+				sign.setLine(i, lines[i]);
+			}
+			sign.update();
+			utils.throwSignChange(block, player, sign.getLines());
+			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign pasted. You have \u221E copies left.");
+		} else if(function.equals(SignFunction.EDIT)) {
+			if(utils.shouldCancel(player)) {
+				event.setCancelled(true);
+			}
+			int line = dataPack.getLineNum();
+			String originalLine = sign.getLine(line);
+
+			String newText = dataPack.getLine();
+
+			sign.setLine(line, ChatColor.translateAlternateColorCodes('&', newText));
+
+			plugin.log.logAll(player.getName(), ": (" + sign.getLocation().getBlockX() + ", " + sign.getLocation().getBlockY() + ", " + sign.getLocation().getBlockZ() + ", " + player.getWorld().getName() + ") \"" + originalLine + "\" changed to \"" + newText + "\"", LogType.SIGNCHANGE);				
+			sign.update();
+			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
+			utils.throwSignChange(block, player, sign.getLines());
+			plugin.playerData.remove(player.getName());
 		}
 	}
 
 	@EventHandler	
 	public void onSignChange(SignChangeEvent e) {
-		if(plugin.config.colorsOnPlace) {
+		if(plugin.config.colorsOnPlace()) {
+			if(plugin.config.useCOPPermission() && !e.getPlayer().hasPermission("signedit.colorsonplace")) {
+				return;
+			}
+
 			String[] lines = e.getLines();		
 			for(int i = 0; i < 4; i++) {
 				String line = lines[i];
 				line = ChatColor.translateAlternateColorCodes('&', line);
-				e.setLine(i, line);
-			}	
+				e.setLine(i, line);				
+			}
 		}
-	}
+	}	
 }
