@@ -17,26 +17,26 @@ public class SignEditLogger {
 	private SignEdit plugin; 
 	private Config config;
 	private Logger log;
-	
+
 	private File logFile;
 	private BufferedWriter fileOut;
-	
+
 	private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-	
+
 	public SignEditLogger(SignEdit plugin) {
 		this.plugin = plugin;
 		this.config = plugin.config;
 		this.log = plugin.getLogger();
 	}
-	
+
 	public void logAll(String thePlayer, String theCommand, LogType theType) {
 		String theMessage = thePlayer + ": /signedit " + theCommand;
-		
+
 		if(theType.equals(LogType.PLAYERCOMMAND))
 			theMessage = "[PLAYER_COMMAND] " + thePlayer + ": /signedit " + theCommand;
 		else if(theType.equals(LogType.SIGNCHANGE)) 
 			theMessage = "[SIGN_CHANGE] " + thePlayer + theCommand; 
-		
+
 		if(config.commandsLogFile())
 			logFile("[" + dateFormat.format(new Date()) + "] " + theMessage);
 
@@ -64,15 +64,15 @@ public class SignEditLogger {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void info(String msg) {
 		log.info(msg);
 	}
-	
+
 	public void warning(String msg) {
 		log.warning(msg);
 	}
-	
+
 	public void severe(String msg) {
 		log.severe(msg);
 	}	

@@ -121,7 +121,7 @@ public class CommandSignEdit implements CommandExecutor {
 			}
 
 			line = utils.implode(args, " ", 1, args.length);
-				
+
 			if(line == null) {
 				plugin.log.logAll(player.getName(), args[0], LogType.PLAYERCOMMAND);
 				SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.EDIT, "", Integer.parseInt(args[0]) - 1);

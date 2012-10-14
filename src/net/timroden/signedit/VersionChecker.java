@@ -54,7 +54,7 @@ public class VersionChecker extends Thread {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		String msg = null;
 
 		if(currentVersion != null) {

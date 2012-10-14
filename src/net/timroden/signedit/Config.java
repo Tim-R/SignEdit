@@ -38,7 +38,7 @@ public class Config {
 		commandsLogFile = config.getBoolean("signedit.commands.logtofile");
 		colorsOnPlace = config.getBoolean("signedit.colorsonplace.enabled");
 		useCOPPerm = config.getBoolean("signedit.colorsonplace.usepermission");
-		
+
 		if(invertMouse) {
 			clickAction = Action.RIGHT_CLICK_BLOCK;
 			clickActionStr = "right click";
@@ -47,43 +47,43 @@ public class Config {
 			clickActionStr = "left click";
 		}
 	}
-	
+
 	public boolean ignoreCreative() {
 		return this.ignoreCreative;
 	}
-	
+
 	public Action clickAction() {
 		return this.clickAction;
 	}
-	
+
 	public String logName() {
 		return this.logName;
 	}
-	
+
 	public boolean notifyVersionUpdate() {
 		return this.notifyOnVersion;
 	}
-	
+
 	public boolean commandsLogConsole() {
 		return this.commandsLogConsole;
 	}
-	
+
 	public boolean commandsLogFile() {
 		return this.commandsLogFile;
 	}
-	
+
 	public boolean colorsOnPlace() {
 		return this.colorsOnPlace;
 	}
-	
+
 	public boolean useCOPPermission() {
 		return this.useCOPPerm;
 	}
-	
+
 	public String clickActionStr() {
 		return this.clickActionStr;
 	}
-	
+
 	public boolean invertMouse() {
 		return this.invertMouse;
 	}

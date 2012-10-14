@@ -10,11 +10,11 @@ import net.timroden.signedit.SignEdit;
 
 public class SignEditUtils {
 	private SignEdit plugin;
-	
+
 	public SignEditUtils(SignEdit plugin) {
 		this.plugin = plugin;
 	}
-	
+
 	public boolean isInt(String check) {
 		try { 
 			Integer.parseInt(check);
@@ -23,27 +23,27 @@ public class SignEditUtils {
 		}
 		return true;
 	}
-	
+
 	public void throwSignChange(final Block theBlock, final Player thePlayer, final String[] theLines) {
 		SignChangeEvent event = new SignChangeEvent(theBlock, thePlayer, theLines);		
 		plugin.pluginMan.callEvent(event);
 	}
-	
+
 	public boolean isSign(Block b) {
 		return (b.getType().equals(Material.SIGN) || b.getType().equals(Material.SIGN_POST) || b.getType().equals(Material.WALL_SIGN));
 	}
-	
+
 	public boolean shouldCancel(Player player) {
 		boolean ret = (plugin.config.ignoreCreative() && !plugin.config.invertMouse() && player.getGameMode().equals(GameMode.CREATIVE)); 
 		System.out.println("Called, returning: " + ret);
 		return ret;
 	}
-	
+
 	public String implode(String[] inputArray, String glue, int start, int end) {
 		if(inputArray.length - 1 == 0) {
 			return null;
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
 		if (inputArray.length > 0) {
 			for (int i = start; i<inputArray.length; i++) {
@@ -53,7 +53,7 @@ public class SignEditUtils {
 		}
 		return sb.toString().trim();		
 	}
-	
+
 	public String capitalize(String toCaps) {
 		return toCaps.substring(0,1).toUpperCase() + toCaps.substring(1);  
 	}
