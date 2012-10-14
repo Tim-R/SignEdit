@@ -15,7 +15,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
 public class SignEdit extends JavaPlugin {	
-	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] ";
+	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] " + ChatColor.RESET;
 	public PluginManager pluginMan;
 
 	public Map<String, SignEditDataPackage> playerData = new HashMap<String, SignEditDataPackage>();
