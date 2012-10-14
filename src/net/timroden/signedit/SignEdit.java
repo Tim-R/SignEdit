@@ -30,19 +30,21 @@ public class SignEdit extends JavaPlugin {
 	@Override
 	public void onEnable() {		
 		utils = new SignEditUtils(this);
-		listener = new SignEditPlayerListener(this);
-		version = new VersionChecker(this);	
-		config = new Config(this);
 		log = new SignEditLogger(this);
+		
+		listener = new SignEditPlayerListener(this);
+		version = new VersionChecker(this);
+		
+		version.start();
+		
+		config = new Config(this);
 		
 		try {			
 			Metrics metrics = new Metrics(this);
 			metrics.start();
 		} catch (IOException e) {
 			log.severe("Error enabling metrics");
-		}
-		
-		version.start();
+		}	
 		
 		pluginMan = getServer().getPluginManager();
 		
