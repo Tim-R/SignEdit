@@ -27,7 +27,6 @@ public class SignEditPlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
-
 		if(plugin.config.notifyVersionUpdate() && player.isPermissionSet("signedit.notify")) {
 			if(!plugin.version.isLatestVersion()) {
 				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
@@ -38,7 +37,6 @@ public class SignEditPlayerListener implements Listener {
 				}, 1L);
 			}
 		}
-
 	}
 
 	@EventHandler
