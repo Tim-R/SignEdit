@@ -24,9 +24,10 @@ public class SignEditUtils {
 		return true;
 	}
 
-	public void throwSignChange(final Block theBlock, final Player thePlayer, final String[] theLines) {
-		SignChangeEvent event = new SignChangeEvent(theBlock, thePlayer, theLines);		
+	public Boolean throwSignChange(final Block theBlock, final Player thePlayer, final String[] theLines) {
+		SignChangeEvent event = new SignChangeEvent(theBlock, thePlayer, theLines);
 		plugin.pluginMan.callEvent(event);
+		return event.isCancelled();
 	}
 
 	public boolean isSign(Block b) {

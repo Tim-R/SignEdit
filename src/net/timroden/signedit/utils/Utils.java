@@ -22,7 +22,7 @@ public class Utils {
 	}    
 	public void throwSignChange(final Block theBlock, final Player thePlayer, final String[] theLines) {
 		SignChangeEvent event = new SignChangeEvent(theBlock, thePlayer, theLines);
-		plugin.pm.callEvent(event);    	
+		plugin.pluginMan.callEvent(event);    	
 	}
 	public String implode(String[] inputArray, String glueString, int start, int end) {
 		StringBuilder sb = new StringBuilder();
