@@ -58,6 +58,12 @@ public class VersionChecker extends Thread {
 		String msg = null;
 
 		if(currentVersion != null) {
+			if(currentVersion.contains("broken")) {
+				msg = pdfile.getName() + " is up to date!";
+				log.info(msg);
+				return;
+			}
+
 			int compare = pdfile.getVersion().compareTo(currentVersion);
 
 			if(compare < 0) {
