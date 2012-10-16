@@ -38,9 +38,9 @@ public class SignEdit extends JavaPlugin {
 		log = new SignEditLogger(this);
 
 		listener = new SignEditPlayerListener(this);
+		yml = new YML(this);
 		localization = new SignEditLocalization(this);
 		version = new VersionChecker(this);	
-		yml = new YML(this);
 
 		version.start();
 

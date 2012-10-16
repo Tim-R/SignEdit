@@ -1,6 +1,7 @@
 package net.timroden.signedit.localization;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import net.timroden.signedit.SignEdit;
 
@@ -11,7 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class SignEditLocalization {
 	private SignEdit plugin;
 
-	public static HashMap<String, String> Strings = new HashMap<String, String>();
+	public static Map<String, String> Strings = new HashMap<String, String>();
 
 	public SignEditLocalization(SignEdit plugin) {
 		this.plugin = plugin;
@@ -21,9 +22,9 @@ public class SignEditLocalization {
 	public void loadLocales() {
 		Strings.clear();
 		
-		FileConfiguration locales = plugin.yml.getYMLConfig(plugin.config.getLocale(), true);
+		FileConfiguration locales = plugin.yml.getYMLConfig(plugin.config.getLocale(), true); 
 
-		if (locales != null){
+		if (locales != null) {
 			String value;
 			for (String key : locales.getKeys(false)) {
 				value = locales.getString(key);
@@ -33,7 +34,7 @@ public class SignEditLocalization {
 				
 		locales = plugin.yml.getYMLConfig("enUS.yml", true); //Get any keys that don't exist in the user specified file, and load them
 		
-		if (locales != null){
+		if (locales != null) {
 			String value;
 			for (String key : locales.getKeys(false)) {
 				if (!Strings.containsKey(key)){

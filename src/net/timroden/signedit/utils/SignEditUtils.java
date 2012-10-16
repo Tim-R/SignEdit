@@ -36,7 +36,6 @@ public class SignEditUtils {
 
 	public boolean shouldCancel(Player player) {
 		boolean ret = (plugin.config.ignoreCreative() && !plugin.config.invertMouse() && player.getGameMode().equals(GameMode.CREATIVE)); 
-		System.out.println("Called, returning: " + ret);
 		return ret;
 	}
 

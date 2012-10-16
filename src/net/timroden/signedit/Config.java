@@ -9,7 +9,7 @@ public class Config {
 
 	private boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile, colorsOnPlace, useCOPPerm;
 	private Action clickAction;
-	private String logName, clickActionStr, locale;
+	private String logName, locale;
 
 	public Config(SignEdit plugin) {
 		this.plugin = plugin;		
@@ -42,10 +42,8 @@ public class Config {
 
 		if(invertMouse) {
 			clickAction = Action.RIGHT_CLICK_BLOCK;
-			clickActionStr = "right click";
 		} else {
 			clickAction = Action.LEFT_CLICK_BLOCK;
-			clickActionStr = "left click";
 		}
 	}
 
@@ -81,15 +79,15 @@ public class Config {
 		return this.useCOPPerm;
 	}
 
-	public String clickActionStr() {
-		return this.clickActionStr;
-	}
-
 	public boolean invertMouse() {
 		return this.invertMouse;
 	}
 	
 	public String getLocale() {
 		return this.locale;
+	}
+
+	public String clickActionStr() {
+		return (invertMouse ? plugin.localization.get("clickRight") : plugin.localization.get("clickLeft"));
 	}
 }

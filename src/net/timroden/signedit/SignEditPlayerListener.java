@@ -1,5 +1,7 @@
 package net.timroden.signedit;
 
+import java.util.logging.Level;
+
 import net.timroden.signedit.data.SignEditDataPackage;
 import net.timroden.signedit.data.SignFunction;
 import net.timroden.signedit.data.LogType;
@@ -136,7 +138,7 @@ public class SignEditPlayerListener implements Listener {
 
 			sign.setLine(line, ChatColor.translateAlternateColorCodes('&', newText));
 
-			plugin.log.logAll(player.getName(), ": (" + sign.getLocation().getBlockX() + ", " + sign.getLocation().getBlockY() + ", " + sign.getLocation().getBlockZ() + ", " + player.getWorld().getName() + ") \"" + originalLine + "\" changed to \"" + newText + "\"", LogType.SIGNCHANGE);                            
+			plugin.log.logAll(player.getName(), ": (" + sign.getLocation().getBlockX() + ", " + sign.getLocation().getBlockY() + ", " + sign.getLocation().getBlockZ() + ", " + player.getWorld().getName() + ") \"" + originalLine + "\" changed to \"" + newText + "\"", LogType.SIGNCHANGE, Level.INFO);
 			sign.update();
 			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
 			plugin.playerData.remove(player.getName());

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.timroden.signedit.Config;
@@ -29,7 +30,7 @@ public class SignEditLogger {
 		this.log = plugin.getLogger();
 	}
 
-	public void logAll(String thePlayer, String theCommand, LogType theType) {
+	public void logAll(String thePlayer, String theCommand, LogType theType, Level level) {
 		String theMessage = thePlayer + ": /signedit " + theCommand;
 
 		if(theType.equals(LogType.PLAYERCOMMAND))
@@ -41,9 +42,9 @@ public class SignEditLogger {
 			logFile("[" + dateFormat.format(new Date()) + "] " + theMessage);
 
 		if(config.commandsLogConsole())
-			log.info(theMessage);
+			log(level, theMessage);
 	}
-	public void logFile(String data) {
+	private void logFile(String data) {
 		try {
 			openFileOutput();
 			fileOut.write(data);
@@ -53,7 +54,7 @@ public class SignEditLogger {
 			e.printStackTrace();
 		}
 	}
-	public void openFileOutput() {
+	private void openFileOutput() {
 		try	{
 			logFile = new File(plugin.getDataFolder(), config.logName());
 			if(!logFile.exists()){
@@ -76,4 +77,9 @@ public class SignEditLogger {
 	public void severe(String msg) {
 		log.severe(msg);
 	}	
+	
+	public void log(Level level, String msg) {
+		log.log(level, msg);
+	}
+	
 }

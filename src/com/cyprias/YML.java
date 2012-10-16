@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import net.timroden.signedit.SignEdit;
 
@@ -16,8 +17,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 public class YML {
 	private SignEdit plugin;
 	
-	HashMap<String, File> Files = new HashMap<String, File>();
-	HashMap<String, FileConfiguration> FileConfigs = new HashMap<String, FileConfiguration>();
+	private Map<String, File> Files = new HashMap<String, File>();
+	private Map<String, FileConfiguration> FileConfigs = new HashMap<String, FileConfiguration>();
 	
 	public YML(SignEdit monarchy) {
 		this.plugin = monarchy;
@@ -91,39 +92,39 @@ public class YML {
 	public void copyNewKeysToDisk(String fileName){
 		InputStream in = plugin.getResource(fileName);
 
-		if (in == null)//File isn't in our jar, exit.
+		if (in == null)
 			return;
 		
-		//Load the stream to a ymlconfig object.
 		YamlConfiguration locales = new YamlConfiguration();
+		
 		try {
 			locales.load(in);
-		} catch (IOException | InvalidConfigurationException e) {
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (InvalidConfigurationException e) {
 			e.printStackTrace();
 		}
-		//Load the file from disk.
+		
 		FileConfiguration targetConfig = plugin.yml.FileConfigs.get(fileName);
 		Boolean save = false;
 		String value;
 		for (String key : locales.getKeys(false)) {
 			value = locales.getString(key);
 
-			if (targetConfig.getString(key) == null){
-				//Our stream has a key the file on disk doesn't have, copy the new key to file. 
-				
+			if (targetConfig.getString(key) == null) {				
 				plugin.log.info("Copying new locale key [" + key + "]=[" + value + "] to " + fileName + ".");
 				
 				targetConfig.set(key, value);
-				save = true; //Only save if we make changes.
+				save = true;
 			}
 			
 		}
 
-		if (save == true){
-			//Save changes to disk.
+		if (save) {
 			try {
 				targetConfig.save(plugin.yml.Files.get(fileName));
-			} catch (IOException e) {e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}

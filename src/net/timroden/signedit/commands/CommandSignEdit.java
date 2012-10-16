@@ -1,5 +1,7 @@
 package net.timroden.signedit.commands;
 
+import java.util.logging.Level;
+
 import net.timroden.signedit.SignEdit;
 import net.timroden.signedit.data.LogType;
 import net.timroden.signedit.data.SignEditDataPackage;
@@ -57,7 +59,7 @@ public class CommandSignEdit implements CommandExecutor {
 		}
 
 		if(args[0].equalsIgnoreCase("cancel")) {
-			plugin.log.logAll(player.getName(), "cancel", LogType.PLAYERCOMMAND);
+			plugin.log.logAll(player.getName(), "cancel", LogType.PLAYERCOMMAND, Level.INFO);
 			if(!plugin.playerData.containsKey(player.getName())) {
 				player.sendMessage(plugin.chatPrefix + ChatColor.RED + "You don't have any requests pending!");
 				return true;
@@ -72,7 +74,7 @@ public class CommandSignEdit implements CommandExecutor {
 			}
 			if(args.length > 1){
 				if(args[1].equalsIgnoreCase("persist")) {
-					plugin.log.logAll(player.getName(), "copy persist", LogType.PLAYERCOMMAND);				
+					plugin.log.logAll(player.getName(), "copy persist", LogType.PLAYERCOMMAND, Level.INFO);				
 					SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.COPYPERSIST);					
 					plugin.playerData.put(player.getName(), tmp);
 					player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "Persistent copying enabled. " + utils.capitalize(plugin.config.clickActionStr()) + " the sign you wish to add to clipboard.");
@@ -82,12 +84,12 @@ public class CommandSignEdit implements CommandExecutor {
 						player.sendMessage(plugin.chatPrefix + ChatColor.RED + "\"" + args[2] + "\" is not a valid number. Please specify a valid number.");
 						return true;
 					}
-					plugin.log.logAll(player.getName(), "default " + args[2], LogType.PLAYERCOMMAND);
+					plugin.log.logAll(player.getName(), "default " + args[2], LogType.PLAYERCOMMAND, Level.INFO);
 					plugin.pasteAmounts.put(player.getName(), Integer.parseInt(args[2]));
 					player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "Changed your default paste amount to " + args[2]);
 					return true;
 				} else {
-					plugin.log.logAll(player.getName(), "copy " + args[1], LogType.PLAYERCOMMAND);
+					plugin.log.logAll(player.getName(), "copy " + args[1], LogType.PLAYERCOMMAND, Level.INFO);
 					if(!utils.isInt(args[1])) {
 						SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.COPY, plugin.pasteAmounts.get(player.getName()));						
 						plugin.playerData.put(player.getName(), tmp);
@@ -101,7 +103,7 @@ public class CommandSignEdit implements CommandExecutor {
 					return true;
 				}
 			} else {
-				plugin.log.logAll(player.getName(), "copy", LogType.PLAYERCOMMAND);
+				plugin.log.logAll(player.getName(), "copy", LogType.PLAYERCOMMAND, Level.INFO);
 				int amt = plugin.pasteAmounts.get(player.getName());
 				SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.COPY, amt);			
 				plugin.playerData.put(player.getName(), tmp);
@@ -123,7 +125,7 @@ public class CommandSignEdit implements CommandExecutor {
 			line = utils.implode(args, " ", 1, args.length);
 
 			if(line == null) {
-				plugin.log.logAll(player.getName(), args[0], LogType.PLAYERCOMMAND);
+				plugin.log.logAll(player.getName(), args[0], LogType.PLAYERCOMMAND, Level.INFO);
 				SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.EDIT, "", Integer.parseInt(args[0]) - 1);
 				plugin.playerData.put(player.getName(), tmp);		
 				player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "Text saved. " + utils.capitalize(plugin.config.clickActionStr()) + " a sign to complete your changes.");
@@ -134,7 +136,7 @@ public class CommandSignEdit implements CommandExecutor {
 				player.sendMessage(plugin.chatPrefix + ChatColor.RED + "Truncating line to be 15 characters");
 				line = line.substring(0, 15);
 			}			
-			plugin.log.logAll(player.getName(), utils.implode(args, " ", 0, args.length), LogType.PLAYERCOMMAND);
+			plugin.log.logAll(player.getName(), utils.implode(args, " ", 0, args.length), LogType.PLAYERCOMMAND, Level.INFO);
 			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.EDIT, line, Integer.parseInt(args[0]) - 1);
 			plugin.playerData.put(player.getName(), tmp);		
 			player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "Text saved. " + utils.capitalize(plugin.config.clickActionStr()) + " a sign to complete your changes.");
