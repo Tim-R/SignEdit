@@ -9,7 +9,7 @@ public class Config {
 
 	private boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile, colorsOnPlace, useCOPPerm;
 	private Action clickAction;
-	private String logName, clickActionStr;
+	private String logName, clickActionStr, locale;
 
 	public Config(SignEdit plugin) {
 		this.plugin = plugin;		
@@ -38,6 +38,7 @@ public class Config {
 		commandsLogFile = config.getBoolean("signedit.commands.logtofile");
 		colorsOnPlace = config.getBoolean("signedit.colorsonplace.enabled");
 		useCOPPerm = config.getBoolean("signedit.colorsonplace.usepermission");
+		locale = config.getString("signedit.locale");
 
 		if(invertMouse) {
 			clickAction = Action.RIGHT_CLICK_BLOCK;
@@ -86,5 +87,9 @@ public class Config {
 
 	public boolean invertMouse() {
 		return this.invertMouse;
+	}
+	
+	public String getLocale() {
+		return this.locale;
 	}
 }

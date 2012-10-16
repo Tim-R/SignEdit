@@ -6,6 +6,7 @@ import java.util.Map;
 
 import net.timroden.signedit.commands.CommandSignEdit;
 import net.timroden.signedit.data.SignEditDataPackage;
+import net.timroden.signedit.localization.SignEditLocalization;
 import net.timroden.signedit.utils.SignEditLogger;
 import net.timroden.signedit.utils.SignEditUtils;
 
@@ -13,6 +14,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
+
+import com.cyprias.YML;
 
 public class SignEdit extends JavaPlugin {	
 	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] " + ChatColor.RESET;
@@ -24,8 +27,10 @@ public class SignEdit extends JavaPlugin {
 	private SignEditPlayerListener listener;
 	public SignEditLogger log;
 	public SignEditUtils utils;
+	public SignEditLocalization localization;
 	public VersionChecker version;
 	public Config config;
+	public YML yml;
 
 	@Override
 	public void onEnable() {		
@@ -33,7 +38,9 @@ public class SignEdit extends JavaPlugin {
 		log = new SignEditLogger(this);
 
 		listener = new SignEditPlayerListener(this);
-		version = new VersionChecker(this);
+		localization = new SignEditLocalization(this);
+		version = new VersionChecker(this);	
+		yml = new YML(this);
 
 		version.start();
 

@@ -15,3 +15,5 @@ signedit:
     colorsonplace: 
         enabled: true
         usepermission: false
+        
+    locale: enUS
