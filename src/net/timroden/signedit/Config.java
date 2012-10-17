@@ -7,9 +7,9 @@ public class Config {
 	private SignEdit plugin;
 	private static Configuration config;
 
-	private boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile, colorsOnPlace, useCOPPerm;
-	private Action clickAction;
-	private String logName, locale;
+	private static boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile, colorsOnPlace, useCOPPerm;
+	private static Action clickAction;
+	private static String logName, locale;
 
 	public Config(SignEdit plugin) {
 		this.plugin = plugin;		
@@ -47,44 +47,44 @@ public class Config {
 		}
 	}
 
-	public boolean ignoreCreative() {
-		return this.ignoreCreative;
+	public static boolean ignoreCreative() {
+		return Config.ignoreCreative;
 	}
 
-	public Action clickAction() {
-		return this.clickAction;
+	public static Action clickAction() {
+		return Config.clickAction;
 	}
 
-	public String logName() {
-		return this.logName;
+	public static String logName() {
+		return Config.logName;
 	}
 
-	public boolean notifyVersionUpdate() {
-		return this.notifyOnVersion;
+	public static boolean notifyVersionUpdate() {
+		return Config.notifyOnVersion;
 	}
 
-	public boolean commandsLogConsole() {
-		return this.commandsLogConsole;
+	public static boolean commandsLogConsole() {
+		return Config.commandsLogConsole;
 	}
 
-	public boolean commandsLogFile() {
-		return this.commandsLogFile;
+	public static boolean commandsLogFile() {
+		return Config.commandsLogFile;
 	}
 
 	public boolean colorsOnPlace() {
-		return this.colorsOnPlace;
+		return Config.colorsOnPlace;
 	}
 
 	public boolean useCOPPermission() {
-		return this.useCOPPerm;
+		return Config.useCOPPerm;
 	}
 
 	public boolean invertMouse() {
-		return this.invertMouse;
+		return Config.invertMouse;
 	}
 	
-	public String getLocale() {
-		return this.locale;
+	public static String getLocale() {
+		return Config.locale;
 	}
 
 	public String clickActionStr() {

@@ -16,7 +16,6 @@ import net.timroden.signedit.data.LogType;
 
 public class SignEditLogger {
 	private SignEdit plugin; 
-	private Config config;
 	private Logger log;
 
 	private File logFile;
@@ -26,7 +25,6 @@ public class SignEditLogger {
 
 	public SignEditLogger(SignEdit plugin) {
 		this.plugin = plugin;
-		this.config = plugin.config;
 		this.log = plugin.getLogger();
 	}
 
@@ -38,10 +36,10 @@ public class SignEditLogger {
 		else if(theType.equals(LogType.SIGNCHANGE)) 
 			theMessage = plugin.localization.get("signChange") + " " + thePlayer + theCommand; 
 
-		if(config.commandsLogFile())
+		if(Config.commandsLogFile())
 			logFile("[" + dateFormat.format(new Date()) + "] " + theMessage);
 
-		if(config.commandsLogConsole())
+		if(Config.commandsLogConsole())
 			log(level, theMessage);
 	}
 	private void logFile(String data) {
@@ -56,11 +54,11 @@ public class SignEditLogger {
 	}
 	private void openFileOutput() {
 		try	{
-			logFile = new File(plugin.getDataFolder(), config.logName());
+			logFile = new File(plugin.getDataFolder(), Config.logName());
 			if(!logFile.exists()){
 				logFile.createNewFile();
 			}	
-			fileOut = new BufferedWriter(new FileWriter(plugin.getDataFolder() + System.getProperty("file.separator") + config.logName(), true));
+			fileOut = new BufferedWriter(new FileWriter(plugin.getDataFolder() + System.getProperty("file.separator") + Config.logName(), true));
 		} catch (IOException e){
 			e.printStackTrace();
 		}

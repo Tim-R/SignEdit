@@ -6,6 +6,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.SignChangeEvent;
 
+import net.timroden.signedit.Config;
 import net.timroden.signedit.SignEdit;
 
 public class SignEditUtils {
@@ -35,7 +36,7 @@ public class SignEditUtils {
 	}
 
 	public boolean shouldCancel(Player player) {
-		boolean ret = (plugin.config.ignoreCreative() && !plugin.config.invertMouse() && player.getGameMode().equals(GameMode.CREATIVE)); 
+		boolean ret = (Config.ignoreCreative() && !plugin.config.invertMouse() && player.getGameMode().equals(GameMode.CREATIVE)); 
 		return ret;
 	}
 

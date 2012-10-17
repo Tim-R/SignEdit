@@ -3,6 +3,7 @@ package net.timroden.signedit.localization;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.timroden.signedit.Config;
 import net.timroden.signedit.SignEdit;
 
 import org.bukkit.ChatColor;
@@ -22,7 +23,7 @@ public class SignEditLocalization {
 	public void loadLocales() {
 		Strings.clear();
 		
-		FileConfiguration locales = plugin.yml.getYMLConfig(plugin.config.getLocale(), true); 
+		FileConfiguration locales = plugin.yml.getYMLConfig(Config.getLocale(), true); 
 
 		if (locales != null) {
 			String value;

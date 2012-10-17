@@ -29,7 +29,7 @@ public class SignEditPlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
-		if(plugin.config.notifyVersionUpdate() && player.isPermissionSet("signedit.notify")) {
+		if(Config.notifyVersionUpdate() && player.isPermissionSet("signedit.notify")) {
 			if(!plugin.version.isLatestVersion()) {
 				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
 					@Override
@@ -46,7 +46,7 @@ public class SignEditPlayerListener implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
 		SignEditDataPackage dataPack = null;
-		if(!event.getAction().equals(plugin.config.clickAction())) {
+		if(!event.getAction().equals(Config.clickAction())) {
 			return;
 		}
 		if(!plugin.playerData.containsKey(player.getName())) {
