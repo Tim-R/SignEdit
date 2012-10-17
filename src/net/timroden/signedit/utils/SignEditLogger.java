@@ -34,9 +34,9 @@ public class SignEditLogger {
 		String theMessage = thePlayer + ": /signedit " + theCommand;
 
 		if(theType.equals(LogType.PLAYERCOMMAND))
-			theMessage = "[PLAYER_COMMAND] " + thePlayer + ": /signedit " + theCommand;
+			theMessage = plugin.localization.get("playerCommand") + " " + thePlayer + ": /signedit " + theCommand;
 		else if(theType.equals(LogType.SIGNCHANGE)) 
-			theMessage = "[SIGN_CHANGE] " + thePlayer + theCommand; 
+			theMessage = plugin.localization.get("signChange") + " " + thePlayer + theCommand; 
 
 		if(config.commandsLogFile())
 			logFile("[" + dateFormat.format(new Date()) + "] " + theMessage);

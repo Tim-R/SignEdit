@@ -67,7 +67,7 @@ public class SignEditPlayerListener implements Listener {
 			}
 			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), sign.getLines(), dataPack.getAmount(), SignFunction.PASTE);
 			plugin.playerData.put(player.getName(), tmp);
-			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard, Punch a sign to paste.");   
+			player.sendMessage(plugin.chatPrefix + plugin.localization.get("copySignAdded", plugin.config.clickActionStr()));   
 		} else if(function.equals(SignFunction.COPYPERSIST)) {
 			if(utils.shouldCancel(player)) {
 				event.setCancelled(true);
@@ -75,7 +75,7 @@ public class SignEditPlayerListener implements Listener {
 			}
 			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.PASTEPERSIST, sign.getLines());
 			plugin.playerData.put(player.getName(), tmp);
-			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign added to clipboard, Punch a sign to paste.");
+			player.sendMessage(plugin.chatPrefix + plugin.localization.get("copySignAdded", plugin.config.clickActionStr()));
 		} else if(function.equals(SignFunction.PASTE)) {
 			if(utils.shouldCancel(player)) {
 				event.setCancelled(true);
@@ -83,7 +83,7 @@ public class SignEditPlayerListener implements Listener {
 			String[] lines = dataPack.getLines();
 
 			if (utils.throwSignChange(block, player, sign.getLines())) {
-				player.sendMessage(plugin.chatPrefix + ChatColor.RED + "Could not paste sign.");
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasteError"));
 				plugin.playerData.remove(player.getName());
 				return;
 			}
@@ -97,13 +97,13 @@ public class SignEditPlayerListener implements Listener {
 
 			if(--amount == 0) {
 				utils.throwSignChange(block, player, sign.getLines());
-				player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign pasted." + ChatColor.RED + " You are out of Copies!");
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasted") + " " + plugin.localization.get("pasteEmpty"));
 				plugin.playerData.remove(player.getName());
 				return;
 			}
 			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), lines, amount, SignFunction.PASTE);
 			plugin.playerData.put(player.getName(), tmp);
-			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign pasted. You have " + amount + " " + (amount == 1 ? "copy" : "copies") + " left.");
+			player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasted") + " " + plugin.localization.get("pasteCopiesLeft", amount, (amount == 1 ? plugin.localization.get("pasteCopyStr") : plugin.localization.get("pasteCopiesStr"))));
 		} else if(function.equals(SignFunction.PASTEPERSIST)) {
 			if(utils.shouldCancel(player)) {
 				event.setCancelled(true);
@@ -111,7 +111,7 @@ public class SignEditPlayerListener implements Listener {
 			String[] lines = dataPack.getLines();
 
 			if (utils.throwSignChange(block, player, sign.getLines())) {
-				player.sendMessage(plugin.chatPrefix + ChatColor.RED + "Could not paste sign.");
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasteError"));
 				plugin.playerData.remove(player.getName());
 				return;
 			}
@@ -120,7 +120,7 @@ public class SignEditPlayerListener implements Listener {
 				sign.setLine(i, lines[i]);
 			}
 			sign.update();
-			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Sign pasted. You have \u221E copies left.");
+			player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasteCopiesLeft", "\u221E", "copies"));
 		} else if(function.equals(SignFunction.EDIT)) {
 			if(utils.shouldCancel(player)) {
 				event.setCancelled(true);
@@ -131,16 +131,16 @@ public class SignEditPlayerListener implements Listener {
 			String newText = dataPack.getLine();
 
 			if (utils.throwSignChange(block, player, sign.getLines()) == true) {
-				player.sendMessage(plugin.chatPrefix + ChatColor.RED + "Could not edit sign");
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("editError"));
 				plugin.playerData.remove(player.getName());
 				return;
 			}
 
 			sign.setLine(line, ChatColor.translateAlternateColorCodes('&', newText));
 
-			plugin.log.logAll(player.getName(), ": (" + sign.getLocation().getBlockX() + ", " + sign.getLocation().getBlockY() + ", " + sign.getLocation().getBlockZ() + ", " + player.getWorld().getName() + ") \"" + originalLine + "\" changed to \"" + newText + "\"", LogType.SIGNCHANGE, Level.INFO);
+			plugin.log.logAll(player.getName(), ": (" + sign.getLocation().getBlockX() + ", " + sign.getLocation().getBlockY() + ", " + sign.getLocation().getBlockZ() + ", " + player.getWorld().getName() + ") \"" + originalLine + "\" " + plugin.localization.get("logChangedTo") + " \"" + newText + "\"", LogType.SIGNCHANGE, Level.INFO);
 			sign.update();
-			player.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Line changed.");
+			player.sendMessage(plugin.chatPrefix + plugin.localization.get("editChanged"));
 			plugin.playerData.remove(player.getName());
 		}
 	}

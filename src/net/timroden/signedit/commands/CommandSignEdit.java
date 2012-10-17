@@ -26,7 +26,7 @@ public class CommandSignEdit implements CommandExecutor {
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if(args.length < 1) {
-			sender.sendMessage(plugin.chatPrefix + ChatColor.RED + "Syntax error");
+			sender.sendMessage(plugin.chatPrefix + plugin.localization.get("syntaxError"));
 			help(sender);
 			return true;
 		}
@@ -38,15 +38,17 @@ public class CommandSignEdit implements CommandExecutor {
 
 		if(args[0].equalsIgnoreCase("reload")) {
 			if(!sender.hasPermission("signedit.admin")) {
-				sender.sendMessage(plugin.chatPrefix + ChatColor.RED + "You don't have permission to reload SignEdit");
+				sender.sendMessage(plugin.chatPrefix + plugin.localization.get("noReloadPermission"));
 				return true;
 			}
 			plugin.config.reload();
-			sender.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Reloaded config");
+			plugin.localization.loadLocales();
+			sender.sendMessage(plugin.chatPrefix + plugin.localization.get("reloaded"));
+			return true;
 		}
 
 		if(!(sender instanceof Player)) {
-			sender.sendMessage(plugin.chatPrefix + ChatColor.RED + "You must be a player to use this command");
+			sender.sendMessage(plugin.chatPrefix + plugin.localization.get("noPlayer"));
 			return true;
 		}
 
@@ -54,19 +56,19 @@ public class CommandSignEdit implements CommandExecutor {
 		String line = null;
 
 		if(!player.hasPermission("signedit.edit")) {
-			player.sendMessage(plugin.chatPrefix + ChatColor.RED + "You don't have permission to use SignEdit!");
+			player.sendMessage(plugin.chatPrefix + plugin.localization.get("noSignEditPermission"));
 			return true;
 		}
 
 		if(args[0].equalsIgnoreCase("cancel")) {
 			plugin.log.logAll(player.getName(), "cancel", LogType.PLAYERCOMMAND, Level.INFO);
 			if(!plugin.playerData.containsKey(player.getName())) {
-				player.sendMessage(plugin.chatPrefix + ChatColor.RED + "You don't have any requests pending!");
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("noRequests"));
 				return true;
 			} 
 
 			plugin.playerData.remove(player.getName());			
-			player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "Request cancelled");
+			player.sendMessage(plugin.chatPrefix + plugin.localization.get("requestCancelled"));
 			return true;
 		} else if(args[0].equalsIgnoreCase("copy")) {
 			if(!plugin.pasteAmounts.containsKey(player.getName())) {
@@ -77,29 +79,29 @@ public class CommandSignEdit implements CommandExecutor {
 					plugin.log.logAll(player.getName(), "copy persist", LogType.PLAYERCOMMAND, Level.INFO);				
 					SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.COPYPERSIST);					
 					plugin.playerData.put(player.getName(), tmp);
-					player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "Persistent copying enabled. " + utils.capitalize(plugin.config.clickActionStr()) + " the sign you wish to add to clipboard.");
+					player.sendMessage(plugin.chatPrefix + plugin.localization.get("persistEnabled", utils.capitalize(plugin.config.clickActionStr())));
 					return true;
 				} else if(args[1].equalsIgnoreCase("default")) {
 					if(!utils.isInt(args[2])) {
-						player.sendMessage(plugin.chatPrefix + ChatColor.RED + "\"" + args[2] + "\" is not a valid number. Please specify a valid number.");
+						player.sendMessage(plugin.chatPrefix + plugin.localization.get("invalidNumber", args[2]));
 						return true;
 					}
 					plugin.log.logAll(player.getName(), "default " + args[2], LogType.PLAYERCOMMAND, Level.INFO);
 					plugin.pasteAmounts.put(player.getName(), Integer.parseInt(args[2]));
-					player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "Changed your default paste amount to " + args[2]);
+					player.sendMessage(plugin.chatPrefix + plugin.localization.get("defaultPastesChanged", args[2]));
 					return true;
 				} else {
 					plugin.log.logAll(player.getName(), "copy " + args[1], LogType.PLAYERCOMMAND, Level.INFO);
 					if(!utils.isInt(args[1])) {
 						SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.COPY, plugin.pasteAmounts.get(player.getName()));						
 						plugin.playerData.put(player.getName(), tmp);
-						player.sendMessage(plugin.chatPrefix + ChatColor.RED + "\"" + args[1] + "\" is not a valid number.");
-						player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + utils.capitalize(plugin.config.clickActionStr()) + " your sign to copy. Making default amount of " + plugin.pasteAmounts.get(player) + " copies");
+						player.sendMessage(plugin.chatPrefix + plugin.localization.get("invalidNumber", args[1]));
+						player.sendMessage(plugin.chatPrefix + plugin.localization.get("defaultCopyPunch", utils.capitalize(plugin.config.clickActionStr()), plugin.pasteAmounts.get(player.getName()), (plugin.pasteAmounts.get(player.getName()) == 1 ? plugin.localization.get("pasteCopyStr") : plugin.localization.get("pasteCopiesStr"))));
 						return true;
 					}
 					SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.COPY, Integer.parseInt(args[1]));					
 					plugin.playerData.put(player.getName(), tmp);
-					player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + utils.capitalize(plugin.config.clickActionStr()) + " your sign to Copy. Making " + args[1] + " " + (Integer.parseInt(args[1]) == 1 ? "copy" : "copies"));
+					player.sendMessage(plugin.chatPrefix + plugin.localization.get("intCopyPunch", utils.capitalize(plugin.config.clickActionStr()), args[1], (Integer.parseInt(args[1]) == 1 ? plugin.localization.get("pasteCopyStr") : plugin.localization.get("pasteCopiesStr"))));
 					return true;
 				}
 			} else {
@@ -107,18 +109,18 @@ public class CommandSignEdit implements CommandExecutor {
 				int amt = plugin.pasteAmounts.get(player.getName());
 				SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.COPY, amt);			
 				plugin.playerData.put(player.getName(), tmp);
-				player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + utils.capitalize(plugin.config.clickActionStr()) + " your sign to copy. Making default amount of " + amt + " " + (amt == 1 ? "copy" : "copies"));
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("defaultCopyPunch", utils.capitalize(plugin.config.clickActionStr()), plugin.pasteAmounts.get(player.getName()), (plugin.pasteAmounts.get(player.getName()) == 1 ? plugin.localization.get("pasteCopyStr") : plugin.localization.get("pasteCopiesStr"))));
 				return true;
 			}
 		}
 		if(args.length >= 1) {			
 			if(!utils.isInt(args[0])) {
-				player.sendMessage(plugin.chatPrefix + ChatColor.RED + "\"" + args[0] + "\" isn't a number. Please enter a valid number.");
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("invalidNumber", args[0]));
 				return true;
 			}
 
 			if(Integer.parseInt(args[0]) > 4 || Integer.parseInt(args[0]) < 1) {
-				player.sendMessage(plugin.chatPrefix + ChatColor.RED + "\"" + args[0] + "\" isn't a valid line number! Please enter a valid line number (1-4).");
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("invalidLine", args[0]));
 				return true;
 			}
 
@@ -128,38 +130,38 @@ public class CommandSignEdit implements CommandExecutor {
 				plugin.log.logAll(player.getName(), args[0], LogType.PLAYERCOMMAND, Level.INFO);
 				SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.EDIT, "", Integer.parseInt(args[0]) - 1);
 				plugin.playerData.put(player.getName(), tmp);		
-				player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "Text saved. " + utils.capitalize(plugin.config.clickActionStr()) + " a sign to complete your changes.");
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("punchToComplete", utils.capitalize(plugin.config.clickActionStr())));
 				return true;
 			}			
 
 			if(line.length() > 15) {
-				player.sendMessage(plugin.chatPrefix + ChatColor.RED + "Truncating line to be 15 characters");
+				player.sendMessage(plugin.chatPrefix + plugin.localization.get("truncating"));
 				line = line.substring(0, 15);
 			}			
 			plugin.log.logAll(player.getName(), utils.implode(args, " ", 0, args.length), LogType.PLAYERCOMMAND, Level.INFO);
 			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.EDIT, line, Integer.parseInt(args[0]) - 1);
 			plugin.playerData.put(player.getName(), tmp);		
-			player.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "Text saved. " + utils.capitalize(plugin.config.clickActionStr()) + " a sign to complete your changes.");
+			player.sendMessage(plugin.chatPrefix + plugin.localization.get("punchToComplete", utils.capitalize(plugin.config.clickActionStr())));
 			return true;
 		}
-		sender.sendMessage(plugin.chatPrefix + ChatColor.RED + "Syntax error");
+		sender.sendMessage(plugin.chatPrefix + plugin.localization.get("syntaxError"));
 		help(sender);		
 		return true;
 	}
 
 	public void help(CommandSender sender) {
-		sender.sendMessage(plugin.chatPrefix + ChatColor.GREEN + "Available commands:");
+		sender.sendMessage(plugin.chatPrefix + plugin.localization.get("commandsAvailable"));
 		if(sender instanceof Player) {
-			sender.sendMessage(plugin.chatPrefix + ChatColor.GRAY + "When altering your signs, " + plugin.config.clickActionStr() + " to apply changes.");
-			sender.sendMessage(ChatColor.GRAY + " - /signedit <line> <text> - Changes the text on the specified line");
-			sender.sendMessage(ChatColor.GRAY + " - /signedit cancel - Cancel any pending SignEdit requests");
-			sender.sendMessage(ChatColor.GRAY + " - /signedit copy [amount] - Copy a sign - amount optional");
-			sender.sendMessage(ChatColor.GRAY + " - /signedit copy persist - Copy a sign infinitely");
-			sender.sendMessage(ChatColor.GRAY + " - /signedit copy default <amount> - Define your default paste amount");
+			sender.sendMessage(plugin.chatPrefix + plugin.localization.get("commandsHeader", plugin.config.clickActionStr()));
+			sender.sendMessage(ChatColor.GRAY + " - " + plugin.localization.get("commandsDef"));
+			sender.sendMessage(ChatColor.GRAY + " - " + plugin.localization.get("commandsCancel"));
+			sender.sendMessage(ChatColor.GRAY + " - " + plugin.localization.get("commandsCopyAmount"));
+			sender.sendMessage(ChatColor.GRAY + " - " + plugin.localization.get("commandsCopyPersist"));
+			sender.sendMessage(ChatColor.GRAY + " - " + plugin.localization.get("commandsCopyDefault"));
 		}
 		if(sender.hasPermission("signedit.admin")) {
-			sender.sendMessage(ChatColor.GRAY + " - /signedit reload - Reload SignEdit configuration");
+			sender.sendMessage(ChatColor.GRAY + " - " + plugin.localization.get("commandsReload"));
 		}
-		sender.sendMessage(ChatColor.GRAY + " - /signedit help - Display this help dialogue");
+		sender.sendMessage(ChatColor.GRAY + " - " + plugin.localization.get("commandsHelp"));
 	}
 }

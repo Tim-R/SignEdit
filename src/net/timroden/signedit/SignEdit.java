@@ -33,24 +33,23 @@ public class SignEdit extends JavaPlugin {
 	public YML yml;
 
 	@Override
-	public void onEnable() {		
+	public void onEnable() {
+		config = new Config(this);
+		yml = new YML(this);
+		localization = new SignEditLocalization(this);		
+		
 		utils = new SignEditUtils(this);
 		log = new SignEditLogger(this);
 
 		listener = new SignEditPlayerListener(this);
-		yml = new YML(this);
-		localization = new SignEditLocalization(this);
 		version = new VersionChecker(this);	
 
 		version.start();
-
-		config = new Config(this);
-
 		try {			
 			Metrics metrics = new Metrics(this);
 			metrics.start();
 		} catch (IOException e) {
-			log.severe("Error enabling metrics");
+			log.severe(localization.get("metricsError"));
 		}	
 
 		pluginMan = getServer().getPluginManager();

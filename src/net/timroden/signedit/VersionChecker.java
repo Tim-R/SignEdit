@@ -15,7 +15,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class VersionChecker extends Thread {
+	private SignEdit plugin;
 	private String rssURL = "http://dev.bukkit.org/server-mods/signedit/files.rss";
+	private String dlURL = "http://dev.bukkit.org/server-mods/signedit/";
 	private String currentVersion = null;	
 	private String versionMessage;	
 	private PluginDescriptionFile pdfile;	
@@ -23,6 +25,7 @@ public class VersionChecker extends Thread {
 	private boolean isLatestVersion = false;
 
 	public VersionChecker(SignEdit plugin) {
+		this.plugin = plugin;
 		this.pdfile = plugin.getDescription();
 		this.log = plugin.log;
 	}
@@ -59,7 +62,8 @@ public class VersionChecker extends Thread {
 
 		if(currentVersion != null) {
 			if(currentVersion.contains("broken")) {
-				msg = pdfile.getName() + " is up to date!";
+				msg = plugin.localization.get("versionUpToDate", pdfile.getName());
+				versionMessage = msg;
 				log.info(msg);
 				return;
 			}
@@ -67,22 +71,21 @@ public class VersionChecker extends Thread {
 			int compare = pdfile.getVersion().compareTo(currentVersion);
 
 			if(compare < 0) {
-				msg = "The version of " + pdfile.getName() + " this server is running is out of date. Latest version: " + currentVersion;
+				msg = plugin.localization.get("versionOutOfDate", pdfile.getName(), currentVersion) + " " + plugin.localization.get("versionLatestDownload", dlURL);
 				isLatestVersion = false;
-				versionMessage = msg + " You can download the latest version at http://dev.bukkit.org/server-mods/signedit/";
+				versionMessage = msg;
 				log.warning(msg);
 			} else if(compare == 0) {
-				msg = pdfile.getName() + " is up to date!";
+				msg = plugin.localization.get("versionUpToDate", pdfile.getName());
 				log.info(msg);
 			} else {
-				msg = "This server is running a Development version of " + pdfile.getName() + ". Expect bugs!";
+				msg = plugin.localization.get("versionDevelopmental", pdfile.getName());
 				isLatestVersion = false;
 				versionMessage = msg;
 				log.warning(msg);
 			}
 		} else {
-			msg = "Error retrieving latest version from BukkitDev.";
-			log.warning(msg);
+			log.warning(plugin.localization.get("versionRetrieveError"));
 		}
 	}
 
