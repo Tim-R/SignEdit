@@ -85,7 +85,8 @@ public class YML {
 
 		try {
 			FileConfigs.get(fileName).save(Files.get(fileName));
-		} catch (IOException e) {e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 	
@@ -105,14 +106,14 @@ public class YML {
 			e.printStackTrace();
 		}
 		
-		FileConfiguration targetConfig = plugin.yml.FileConfigs.get(fileName);
+		FileConfiguration targetConfig = FileConfigs.get(fileName);
 		Boolean save = false;
 		String value;
 		for (String key : locales.getKeys(false)) {
 			value = locales.getString(key);
 
 			if (targetConfig.getString(key) == null) {				
-				plugin.log.info("Copying new locale key [" + key + "]=[" + value + "] to " + fileName + ".");
+				plugin.log.info("Copying new locale key [" + key + "]=[" + value + "] to " + fileName);
 				
 				targetConfig.set(key, value);
 				save = true;
@@ -122,7 +123,7 @@ public class YML {
 
 		if (save) {
 			try {
-				targetConfig.save(plugin.yml.Files.get(fileName));
+				targetConfig.save(Files.get(fileName));
 			} catch (IOException e) {
 				e.printStackTrace();
 			}

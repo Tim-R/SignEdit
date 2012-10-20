@@ -51,7 +51,9 @@ public class SignEdit extends JavaPlugin {
 		} catch (IOException e) {
 			log.severe(localization.get("metricsError"));
 		}	
-
+		
+		log.info("Localized for locale: " + Config.getLocale());
+		
 		pluginMan = getServer().getPluginManager();
 
 		pluginMan.registerEvents(listener, this);

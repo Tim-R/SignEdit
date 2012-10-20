@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.ChatColor;
+
 import net.timroden.signedit.Config;
 import net.timroden.signedit.SignEdit;
 import net.timroden.signedit.data.LogType;
@@ -29,7 +31,7 @@ public class SignEditLogger {
 	}
 
 	public void logAll(String thePlayer, String theCommand, LogType theType, Level level) {
-		String theMessage = thePlayer + ": /signedit " + theCommand;
+		String theMessage = thePlayer + ": /signedit " + ChatColor.stripColor(theCommand);
 
 		if(theType.equals(LogType.PLAYERCOMMAND))
 			theMessage = plugin.localization.get("playerCommand") + " " + thePlayer + ": /signedit " + theCommand;
@@ -45,7 +47,7 @@ public class SignEditLogger {
 	private void logFile(String data) {
 		try {
 			openFileOutput();
-			fileOut.write(data);
+			fileOut.write(ChatColor.stripColor(data));
 			fileOut.newLine();
 			fileOut.close();
 		} catch (IOException e) {
@@ -65,19 +67,19 @@ public class SignEditLogger {
 	}
 
 	public void info(String msg) {
-		log.info(msg);
+		log.info(ChatColor.stripColor(msg));
 	}
 
 	public void warning(String msg) {
-		log.warning(msg);
+		log.warning(ChatColor.stripColor(msg));
 	}
 
 	public void severe(String msg) {
-		log.severe(msg);
+		log.severe(ChatColor.stripColor(msg));
 	}	
 	
 	public void log(Level level, String msg) {
-		log.log(level, msg);
+		log.log(level, ChatColor.stripColor(msg));
 	}
 	
 }

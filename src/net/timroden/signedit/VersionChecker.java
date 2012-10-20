@@ -55,7 +55,9 @@ public class VersionChecker extends Thread {
 				}
 			}
 		} catch(Exception e) {
-			e.printStackTrace();
+			log.info(plugin.localization.get("versionRetrieveError"));
+			log.info(e.toString());
+			return;
 		}
 
 		String msg = null;
@@ -85,7 +87,7 @@ public class VersionChecker extends Thread {
 				log.warning(msg);
 			}
 		} else {
-			log.warning(plugin.localization.get("versionRetrieveError"));
+			log.info(plugin.localization.get("versionRetrieveError"));
 		}
 	}
 

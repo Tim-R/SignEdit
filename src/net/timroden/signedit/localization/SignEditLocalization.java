@@ -33,7 +33,7 @@ public class SignEditLocalization {
 			}
 		}
 				
-		locales = plugin.yml.getYMLConfig("enUS.yml", true); //Get any keys that don't exist in the user specified file, and load them
+		locales = plugin.yml.getYMLConfig("enUS.yml", true);
 		
 		if (locales != null) {
 			String value;
@@ -50,7 +50,7 @@ public class SignEditLocalization {
 		return Strings.get(key);
 	}
 	
-	public String get(String key, Object...args) {
+	public String get(String key, Object... args) {
 		String value = Strings.get(key).toString();
 		try {
 			if (value != null || args != null)
