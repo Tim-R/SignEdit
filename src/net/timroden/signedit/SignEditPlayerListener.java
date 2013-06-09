@@ -1,21 +1,19 @@
 package net.timroden.signedit;
 
 import java.util.logging.Level;
-
+import net.timroden.signedit.data.LogType;
 import net.timroden.signedit.data.SignEditDataPackage;
 import net.timroden.signedit.data.SignFunction;
-import net.timroden.signedit.data.LogType;
 import net.timroden.signedit.utils.SignEditUtils;
-
 import org.bukkit.ChatColor;
 import org.bukkit.block.Block;
+import org.bukkit.block.Sign;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.block.Sign;
 
 public class SignEditPlayerListener implements Listener {
 	private SignEdit plugin;
@@ -29,16 +27,17 @@ public class SignEditPlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
-		if(Config.notifyVersionUpdate() && player.isPermissionSet("signedit.notify")) {
-			if(!plugin.version.isLatestVersion()) {
-				plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-					@Override
-					public void run() {
-						player.sendMessage(plugin.chatPrefix + ChatColor.DARK_PURPLE + plugin.version.getVersionMessage());
-					}
-				}, 1L);
-			}
-		}
+		/**/
+		if ((Config.notifyVersionUpdate()) && (player.isPermissionSet("signedit.notify")) && (!VersionChecker.isLatestVersion()))
+
+			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
+
+				@Override
+				public void run() {
+					player.sendMessage(SignEditPlayerListener.this.plugin.chatPrefix + ChatColor.DARK_PURPLE + VersionChecker.getVersionMessage());
+
+				}
+			}, 1L);
 	}
 
 	@EventHandler
@@ -46,118 +45,130 @@ public class SignEditPlayerListener implements Listener {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();
 		SignEditDataPackage dataPack = null;
-		if(!event.getAction().equals(Config.clickAction())) {
+		if (!event.getAction().equals(Config.clickAction())) {
 			return;
 		}
-		if(!plugin.playerData.containsKey(player.getName())) {
+		if (!this.plugin.playerData.containsKey(player.getName())) {
 			return;
-		}                              
-		if(block == null || !utils.isSign(block)) {
+		}
+		if ((block == null) || (!this.utils.isSign(block))) {
 			return;
 		}
 		Sign sign = (Sign) block.getState();
-		dataPack = plugin.playerData.get(player.getName());
+		dataPack = (SignEditDataPackage) this.plugin.playerData.get(player.getName());
 
 		SignFunction function = dataPack.getFunction();
 
-		if(function.equals(SignFunction.COPY)) {
-			if(utils.shouldCancel(player)) {
+		if (function.equals(SignFunction.COPY)) {
+			if (this.utils.shouldCancel(player)) {
 				event.setCancelled(true);
 				sign.update();
 			}
 			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), sign.getLines(), dataPack.getAmount(), SignFunction.PASTE);
-			plugin.playerData.put(player.getName(), tmp);
-			player.sendMessage(plugin.chatPrefix + plugin.localization.get("copySignAdded", plugin.config.clickActionStr()));   
-		} else if(function.equals(SignFunction.COPYPERSIST)) {
-			if(utils.shouldCancel(player)) {
+			this.plugin.playerData.put(player.getName(), tmp);
+			player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("copySignAdded", new Object[] { this.plugin.config.clickActionStr() }));
+		} else if (function.equals(SignFunction.COPYPERSIST)) {
+			if (this.utils.shouldCancel(player)) {
 				event.setCancelled(true);
 				sign.update();
 			}
 			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), SignFunction.PASTEPERSIST, sign.getLines());
-			plugin.playerData.put(player.getName(), tmp);
-			player.sendMessage(plugin.chatPrefix + plugin.localization.get("copySignAdded", plugin.config.clickActionStr()));
-		} else if(function.equals(SignFunction.PASTE)) {
-			if(utils.shouldCancel(player)) {
+			this.plugin.playerData.put(player.getName(), tmp);
+			player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("copySignAdded", new Object[] { this.plugin.config.clickActionStr() }));
+		} else if (function.equals(SignFunction.PASTE)) {
+			if (this.utils.shouldCancel(player)) {
 				event.setCancelled(true);
 			}
 			String[] lines = dataPack.getLines();
 
-			if (utils.throwSignChange(block, player, sign.getLines())) {
-				player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasteError"));
-				plugin.playerData.remove(player.getName());
+			if (this.utils.throwSignChange(block, player, sign.getLines()).booleanValue()) {
+				player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("pasteError"));
+				this.plugin.playerData.remove(player.getName());
 				return;
 			}
 
-			for(int i = 0; i < lines.length; i++) {
+			for (int i = 0; i < lines.length; i++) {
 				sign.setLine(i, lines[i]);
 			}
 			sign.update();
 
 			int amount = dataPack.getAmount();
 
-			if(--amount == 0) {
-				utils.throwSignChange(block, player, sign.getLines());
-				player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasted") + " " + plugin.localization.get("pasteEmpty"));
-				plugin.playerData.remove(player.getName());
+			amount--;
+			if (amount == 0) {
+				this.utils.throwSignChange(block, player, sign.getLines());
+				player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("pasted") + " " + this.plugin.localization.get("pasteEmpty"));
+				this.plugin.playerData.remove(player.getName());
 				return;
 			}
 			SignEditDataPackage tmp = new SignEditDataPackage(player.getName(), lines, amount, SignFunction.PASTE);
-			plugin.playerData.put(player.getName(), tmp);
-			player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasted") + " " + plugin.localization.get("pasteCopiesLeft", amount, (amount == 1 ? plugin.localization.get("pasteCopyStr") : plugin.localization.get("pasteCopiesStr"))));
-		} else if(function.equals(SignFunction.PASTEPERSIST)) {
-			if(utils.shouldCancel(player)) {
+			this.plugin.playerData.put(player.getName(), tmp);
+			player.sendMessage(this.plugin.chatPrefix
+				+ this.plugin.localization.get("pasted")
+				+ " "
+				+ this.plugin.localization.get(
+					"pasteCopiesLeft",
+					new Object[] { Integer.valueOf(amount),
+						amount == 1 ? this.plugin.localization.get("pasteCopyStr") : this.plugin.localization.get("pasteCopiesStr") }));
+		} else if (function.equals(SignFunction.PASTEPERSIST)) {
+			if (this.utils.shouldCancel(player)) {
 				event.setCancelled(true);
 			}
 			String[] lines = dataPack.getLines();
 
-			if (utils.throwSignChange(block, player, sign.getLines())) {
-				player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasteError"));
-				plugin.playerData.remove(player.getName());
+			if (this.utils.throwSignChange(block, player, sign.getLines()).booleanValue()) {
+				player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("pasteError"));
+				this.plugin.playerData.remove(player.getName());
 				return;
 			}
 
-			for(int i = 0; i < lines.length; i++) {
+			for (int i = 0; i < lines.length; i++) {
 				sign.setLine(i, lines[i]);
 			}
 			sign.update();
-			player.sendMessage(plugin.chatPrefix + plugin.localization.get("pasteCopiesLeft", "\u221E", "copies"));
-		} else if(function.equals(SignFunction.EDIT)) {
-			if(utils.shouldCancel(player)) {
+			player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("pasteCopiesLeft", new Object[] { "∞", "copies" }));
+		} else if (function.equals(SignFunction.EDIT)) {
+			if (this.utils.shouldCancel(player)) {
 				event.setCancelled(true);
 			}
 			int line = dataPack.getLineNum();
 			String originalLine = sign.getLine(line);
 
+			String[] existingLines = sign.getLines();
 			String newText = dataPack.getLine();
+			existingLines[line] = newText;
 
-			if (utils.throwSignChange(block, player, sign.getLines()) == true) {
-				player.sendMessage(plugin.chatPrefix + plugin.localization.get("editError"));
-				plugin.playerData.remove(player.getName());
+			if (this.utils.throwSignChange(block, player, existingLines).booleanValue()) {
+				player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("editError"));
+				this.plugin.playerData.remove(player.getName());
 				return;
 			}
 
 			sign.setLine(line, ChatColor.translateAlternateColorCodes('&', newText));
 
-			plugin.log.logAll(player.getName(), ": (" + sign.getLocation().getBlockX() + ", " + sign.getLocation().getBlockY() + ", " + sign.getLocation().getBlockZ() + ", " + player.getWorld().getName() + ") \"" + originalLine + "\" " + plugin.localization.get("logChangedTo") + " \"" + newText + "\"", LogType.SIGNCHANGE, Level.INFO);
+			this.plugin.log.logAll(player.getName(),
+				": (" + sign.getLocation().getBlockX() + ", " + sign.getLocation().getBlockY() + ", " + sign.getLocation().getBlockZ() + ", "
+					+ player.getWorld().getName() + ") \"" + originalLine + "\" " + this.plugin.localization.get("logChangedTo") + " \"" + newText + "\"",
+				LogType.SIGNCHANGE, Level.INFO);
 			sign.update();
-			player.sendMessage(plugin.chatPrefix + plugin.localization.get("editChanged"));
-			plugin.playerData.remove(player.getName());
+			player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("editChanged"));
+			this.plugin.playerData.remove(player.getName());
 		}
 	}
 
-	@EventHandler  
+	@EventHandler
 	public void onSignChange(SignChangeEvent e) {
-		if(plugin.config.colorsOnPlace()) {
-			if(plugin.config.useCOPPermission() && !e.getPlayer().hasPermission("signedit.colorsonplace")) {
+		if (this.plugin.config.colorsOnPlace()) {
+			if ((this.plugin.config.useCOPPermission()) && (!e.getPlayer().hasPermission("signedit.colorsonplace"))) {
 				return;
 			}
 
-			String[] lines = e.getLines();         
-			for(int i = 0; i < 4; i++) {
+			String[] lines = e.getLines();
+			for (int i = 0; i < 4; i++) {
 				String line = lines[i];
 				line = ChatColor.translateAlternateColorCodes('&', line);
-				e.setLine(i, line);                            
+				e.setLine(i, line);
 			}
 		}
-	}      
+	}
 }
