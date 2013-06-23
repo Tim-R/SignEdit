@@ -2,6 +2,8 @@ package net.timroden.signedit.utils;
 
 import net.timroden.signedit.Config;
 import net.timroden.signedit.SignEdit;
+
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -26,6 +28,31 @@ public class SignEditUtils
     return true;
   }
 
+  
+	public static final String cleanColorCodes(String mess) {
+		return mess.replaceAll("(&([" + colorCodes + "]))", "");
+	}
+
+	private static final String colorCodes;
+
+	static {
+		String string = "";
+		for (ChatColor color : ChatColor.values()) {
+			char c = color.getChar();
+			if (!Character.isLetter(c)) {
+				string += c;
+			} else {
+				string += Character.toUpperCase(c);
+				string += Character.toLowerCase(c);
+			}
+		}
+		colorCodes = string;
+	}
+  
+	private String strip(String in){
+		return cleanColorCodes(ChatColor.stripColor(in));
+	}
+	
 	public Boolean throwSignChange(Block theBlock, Player thePlayer, String[] theLines) {
 		String[] orginialLines = theLines.clone();
 
@@ -33,9 +60,11 @@ public class SignEditUtils
 		this.plugin.pluginMan.callEvent(event);
 
 		for (int i=0; i<theLines.length;i++)
-			if (!theLines[i].equals(orginialLines[i]))
+			if (!strip(theLines[i]).equalsIgnoreCase(strip(orginialLines[i]))){
+				plugin.log.info("[BLOCKED] Another plugin modified line "+(i+1)+": " + strip(orginialLines[i]) + " to " + strip(theLines[i]));
 				return true;
-
+			}
+		
 		return Boolean.valueOf(event.isCancelled());
 	}
 
