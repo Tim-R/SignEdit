@@ -17,3 +17,5 @@ signedit:
     locale: enUS
 
     metrics: true
+    
+    fireBlockBreak: true

@@ -8,6 +8,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
 public class SignEditUtils
@@ -54,6 +55,17 @@ public class SignEditUtils
 	}
 	
 	public Boolean throwSignChange(Block theBlock, Player thePlayer, String[] theLines) {
+		if (Config.fireBlockBreak() == true){
+			BlockBreakEvent b = new BlockBreakEvent(theBlock, thePlayer);
+			this.plugin.pluginMan.callEvent(b);
+			if (b.isCancelled()){
+				plugin.log.info("[BLOCKED] Another plugin blocked the BlockBreak check.");
+				return true;
+			}
+			
+		}
+		
+		
 		String[] orginialLines = theLines.clone();
 
 		SignChangeEvent event = new SignChangeEvent(theBlock, thePlayer, theLines);
