@@ -25,22 +25,6 @@ public class SignEditPlayerListener implements Listener {
 	}
 
 	@EventHandler
-	public void onPlayerJoin(PlayerJoinEvent event) {
-		final Player player = event.getPlayer();
-		/**/
-		if ((Config.notifyVersionUpdate()) && (player.isPermissionSet("signedit.notify")) && (!VersionChecker.isLatestVersion()))
-
-			this.plugin.getServer().getScheduler().scheduleSyncDelayedTask(this.plugin, new Runnable() {
-
-				@Override
-				public void run() {
-					player.sendMessage(SignEditPlayerListener.this.plugin.chatPrefix + ChatColor.DARK_PURPLE + VersionChecker.getVersionMessage());
-
-				}
-			}, 1L);
-	}
-
-	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent event) {
 		Player player = event.getPlayer();
 		Block block = event.getClickedBlock();

@@ -9,8 +9,6 @@ signedit:
     commands:
         logtofile: false
         logtoconsole: true  
-        
-    notifyversion: true 
     
     colorsonplace: 
         enabled: true

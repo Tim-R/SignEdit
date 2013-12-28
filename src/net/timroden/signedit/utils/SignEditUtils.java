@@ -65,6 +65,7 @@ public class SignEditUtils
 				return true;
 			}
 		
+		
 		return Boolean.valueOf(event.isCancelled());
 	}
 

@@ -24,7 +24,6 @@ public class SignEdit extends JavaPlugin
   public SignEditLogger log;
   public SignEditUtils utils;
   public SignEditLocalization localization;
-  public VersionChecker version;
   public Config config;
   public YML yml;
 
@@ -38,9 +37,6 @@ public class SignEdit extends JavaPlugin
     this.log = new SignEditLogger(this);
 
     this.listener = new SignEditPlayerListener(this);
-    this.version = new VersionChecker(this);
-
-    this.version.start();
     
     if (config.useMetrics()){
 	    try {
