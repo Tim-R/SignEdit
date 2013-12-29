@@ -18,7 +18,7 @@ public class Config
   private static Action clickAction;
   private static String logName;
   private static String locale;
-  private static boolean fireBlockBreak;
+  private static boolean fireBlockBreakPlace;
   
   public Config(SignEdit plugin)
   {
@@ -51,7 +51,7 @@ public class Config
     locale = config.getString("signedit.locale");
 
     metrics = config.getBoolean("signedit.metrics");
-    fireBlockBreak = config.getBoolean("signedit.fireBlockBreak");
+    fireBlockBreakPlace = config.getBoolean("signedit.fireBlockBreakPlace");
     
     if (invertMouse)
       clickAction = Action.RIGHT_CLICK_BLOCK;
@@ -59,9 +59,9 @@ public class Config
       clickAction = Action.LEFT_CLICK_BLOCK;
   }
 
-  public static boolean fireBlockBreak()
+  public static boolean fireBlockBreakPlace()
   {
-    return fireBlockBreak;
+    return fireBlockBreakPlace;
   }
   
   public static boolean ignoreCreative()

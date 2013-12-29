@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.SignChangeEvent;
 
 public class SignEditUtils
@@ -55,7 +56,7 @@ public class SignEditUtils
 	}
 	
 	public Boolean throwSignChange(Block theBlock, Player thePlayer, String[] theLines) {
-		if (Config.fireBlockBreak() == true){
+		if (Config.fireBlockBreakPlace() == true){
 			BlockBreakEvent b = new BlockBreakEvent(theBlock, thePlayer);
 			this.plugin.pluginMan.callEvent(b);
 			if (b.isCancelled()){
@@ -63,6 +64,12 @@ public class SignEditUtils
 				return true;
 			}
 			
+			BlockPlaceEvent p = new BlockPlaceEvent(theBlock, null, theBlock, null, thePlayer, false);
+			this.plugin.pluginMan.callEvent(p);
+			if (p.isCancelled()){
+				plugin.log.info("[BLOCKED] Another plugin blocked the BlockPlace check.");
+				return true;
+			}
 		}
 		
 		
