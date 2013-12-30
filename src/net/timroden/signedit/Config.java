@@ -3,91 +3,113 @@ package net.timroden.signedit;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.event.block.Action;
 
-public class Config {	
-	private SignEdit plugin;
-	private static Configuration config;
+public class Config
+{
+  private SignEdit plugin;
+  private static Configuration config;
+  private static boolean ignoreCreative;
+  private static boolean invertMouse;
+  private static boolean notifyOnVersion;
+  private static boolean commandsLogConsole;
+  private static boolean commandsLogFile;
+  private static boolean colorsOnPlace;
+  private static boolean useCOPPerm;
+  private static boolean metrics;
+  private static Action clickAction;
+  private static String logName;
+  private static String locale;
+  private static boolean fireBlockBreakPlace;
+  
+  public Config(SignEdit plugin)
+  {
+    this.plugin = plugin;
+    config = plugin.getConfig().options().configuration();
+    config.options().copyDefaults(true);
+    plugin.saveConfig();
 
-	private static boolean ignoreCreative, invertMouse, notifyOnVersion, commandsLogConsole, commandsLogFile, colorsOnPlace, useCOPPerm;
-	private static Action clickAction;
-	private static String logName, locale;
+    getOpts();
+  }
 
-	public Config(SignEdit plugin) {
-		this.plugin = plugin;		
-		config = plugin.getConfig().options().configuration();		
-		config.options().copyDefaults(true);		
-		plugin.saveConfig();
+  public void reload() {
+    this.plugin.reloadConfig();
+    config = this.plugin.getConfig().options().configuration();
+    config.options().copyDefaults(true);
+    this.plugin.saveConfig();
 
-		getOpts();
-	}
+    getOpts();
+  }
 
-	public void reload() {
-		plugin.reloadConfig();
-		config = plugin.getConfig().options().configuration();		
-		config.options().copyDefaults(true);		
-		plugin.saveConfig();
+  public void getOpts() {
+    ignoreCreative = config.getBoolean("signedit.ignorecreative");
+    logName = config.getString("signedit.log.filename");
+    invertMouse = config.getBoolean("signedit.invertmouse");
+    notifyOnVersion = config.getBoolean("signedit.notifyversion");
+    commandsLogConsole = config.getBoolean("signedit.commands.logtoconsole");
+    commandsLogFile = config.getBoolean("signedit.commands.logtofile");
+    colorsOnPlace = config.getBoolean("signedit.colorsonplace.enabled");
+    useCOPPerm = config.getBoolean("signedit.colorsonplace.usepermission");
+    locale = config.getString("signedit.locale");
 
-		getOpts();
-	}
+    metrics = config.getBoolean("signedit.metrics");
+    fireBlockBreakPlace = config.getBoolean("signedit.fireBlockBreakPlace");
+    
+    if (invertMouse)
+      clickAction = Action.RIGHT_CLICK_BLOCK;
+    else
+      clickAction = Action.LEFT_CLICK_BLOCK;
+  }
 
-	public void getOpts() {
-		ignoreCreative = config.getBoolean("signedit.ignorecreative");
-		logName = config.getString("signedit.log.filename");
-		invertMouse = config.getBoolean("signedit.invertmouse");
-		notifyOnVersion = config.getBoolean("signedit.notifyversion");
-		commandsLogConsole = config.getBoolean("signedit.commands.logtoconsole");
-		commandsLogFile = config.getBoolean("signedit.commands.logtofile");
-		colorsOnPlace = config.getBoolean("signedit.colorsonplace.enabled");
-		useCOPPerm = config.getBoolean("signedit.colorsonplace.usepermission");
-		locale = config.getString("signedit.locale");
+  public static boolean fireBlockBreakPlace()
+  {
+    return fireBlockBreakPlace;
+  }
+  
+  public static boolean ignoreCreative()
+  {
+    return ignoreCreative;
+  }
 
-		if(invertMouse) {
-			clickAction = Action.RIGHT_CLICK_BLOCK;
-		} else {
-			clickAction = Action.LEFT_CLICK_BLOCK;
-		}
-	}
+  public static Action clickAction() {
+    return clickAction;
+  }
 
-	public static boolean ignoreCreative() {
-		return Config.ignoreCreative;
-	}
+  public static String logName() {
+    return logName;
+  }
 
-	public static Action clickAction() {
-		return Config.clickAction;
-	}
+  public static boolean notifyVersionUpdate() {
+    return notifyOnVersion;
+  }
 
-	public static String logName() {
-		return Config.logName;
-	}
+  public static boolean commandsLogConsole() {
+    return commandsLogConsole;
+  }
 
-	public static boolean notifyVersionUpdate() {
-		return Config.notifyOnVersion;
-	}
+  public static boolean commandsLogFile() {
+    return commandsLogFile;
+  }
 
-	public static boolean commandsLogConsole() {
-		return Config.commandsLogConsole;
-	}
+  public boolean colorsOnPlace() {
+    return colorsOnPlace;
+  }
 
-	public static boolean commandsLogFile() {
-		return Config.commandsLogFile;
-	}
+  public boolean useCOPPermission() {
+    return useCOPPerm;
+  }
 
-	public boolean colorsOnPlace() {
-		return Config.colorsOnPlace;
-	}
+  public boolean invertMouse() {
+    return invertMouse;
+  }
 
-	public boolean useCOPPermission() {
-		return Config.useCOPPerm;
-	}
+  public static String getLocale() {
+    return locale;
+  }
 
-	public boolean invertMouse() {
-		return Config.invertMouse;
-	}
-	
-	public static String getLocale() {
-		return Config.locale;
-	}
-
-	public String clickActionStr() {
-		return (invertMouse ? plugin.localization.get("clickRight") : plugin.localization.get("clickLeft"));
-	}
+  public boolean useMetrics(){
+	  return metrics;
+  }
+  
+  public String clickActionStr() {
+    return invertMouse ? this.plugin.localization.get("clickRight") : this.plugin.localization.get("clickLeft");
+  }
 }

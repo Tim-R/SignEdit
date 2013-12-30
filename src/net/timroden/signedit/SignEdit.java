@@ -1,66 +1,60 @@
 package net.timroden.signedit;
 
+import com.cyprias.YML;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 import net.timroden.signedit.commands.CommandSignEdit;
 import net.timroden.signedit.data.SignEditDataPackage;
 import net.timroden.signedit.localization.SignEditLocalization;
 import net.timroden.signedit.utils.SignEditLogger;
 import net.timroden.signedit.utils.SignEditUtils;
-
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.mcstats.Metrics;
 
-import com.cyprias.YML;
+public class SignEdit extends JavaPlugin
+{
+  public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] " + ChatColor.RESET;
+  public PluginManager pluginMan;
+  public Map<String, SignEditDataPackage> playerData = new HashMap<String, SignEditDataPackage>();
+  public Map<String, Integer> pasteAmounts = new HashMap<String, Integer>();
+  private SignEditPlayerListener listener;
+  public SignEditLogger log;
+  public SignEditUtils utils;
+  public SignEditLocalization localization;
+  public Config config;
+  public YML yml;
 
-public class SignEdit extends JavaPlugin {	
-	public String chatPrefix = ChatColor.RESET + "[" + ChatColor.AQUA + "SignEdit" + ChatColor.WHITE + "] " + ChatColor.RESET;
-	public PluginManager pluginMan;
+  public void onEnable()
+  {
+    this.config = new Config(this);
+    this.yml = new YML(this);
+    this.localization = new SignEditLocalization(this);
 
-	public Map<String, SignEditDataPackage> playerData = new HashMap<String, SignEditDataPackage>();
-	public Map<String, Integer> pasteAmounts = new HashMap<String, Integer>();
+    this.utils = new SignEditUtils(this);
+    this.log = new SignEditLogger(this);
 
-	private SignEditPlayerListener listener;
-	public SignEditLogger log;
-	public SignEditUtils utils;
-	public SignEditLocalization localization;
-	public VersionChecker version;
-	public Config config;
-	public YML yml;
+    this.listener = new SignEditPlayerListener(this);
+    
+    if (config.useMetrics()){
+	    try {
+	      Metrics metrics = new Metrics(this);
+	      metrics.start();
+	    } catch (IOException e) {
+	      this.log.severe(this.localization.get("metricsError"));
+	    }
+    }
+    
+    this.pluginMan = getServer().getPluginManager();
 
-	@Override
-	public void onEnable() {
-		config = new Config(this);
-		yml = new YML(this);
-		localization = new SignEditLocalization(this);		
-		
-		utils = new SignEditUtils(this);
-		log = new SignEditLogger(this);
+    this.pluginMan.registerEvents(this.listener, this);
 
-		listener = new SignEditPlayerListener(this);
-		version = new VersionChecker(this);	
+    getCommand("signedit").setExecutor(new CommandSignEdit(this));
+  }
 
-		version.start();
-		try {			
-			Metrics metrics = new Metrics(this);
-			metrics.start();
-		} catch (IOException e) {
-			log.severe(localization.get("metricsError"));
-		}	
-		
-		log.info("Localized for locale: " + Config.getLocale());
-		
-		pluginMan = getServer().getPluginManager();
-
-		pluginMan.registerEvents(listener, this);
-
-		getCommand("signedit").setExecutor(new CommandSignEdit(this));
-	}
-
-	@Override
-	public void onDisable() {}
+  public void onDisable()
+  {
+  }
 }

@@ -9,77 +9,74 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.bukkit.ChatColor;
-
 import net.timroden.signedit.Config;
 import net.timroden.signedit.SignEdit;
 import net.timroden.signedit.data.LogType;
 
-public class SignEditLogger {
-	private SignEdit plugin; 
-	private Logger log;
+public class SignEditLogger
+{
+  private SignEdit plugin;
+  private Logger log;
+  private File logFile;
+  private BufferedWriter fileOut;
+  private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-	private File logFile;
-	private BufferedWriter fileOut;
+  public SignEditLogger(SignEdit plugin) {
+    this.plugin = plugin;
+    this.log = plugin.getLogger();
+  }
 
-	private DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+  public void logAll(String thePlayer, String theCommand, LogType theType, Level level) {
+    String theMessage = thePlayer + ": /signedit " + theCommand;
 
-	public SignEditLogger(SignEdit plugin) {
-		this.plugin = plugin;
-		this.log = plugin.getLogger();
-	}
+    if (theType.equals(LogType.PLAYERCOMMAND))
+      theMessage = this.plugin.localization.get("playerCommand") + " " + thePlayer + ": /signedit " + theCommand;
+    else if (theType.equals(LogType.SIGNCHANGE)) {
+      theMessage = this.plugin.localization.get("signChange") + " " + thePlayer + theCommand;
+    }
+    if (Config.commandsLogFile()) {
+      logFile("[" + this.dateFormat.format(new Date()) + "] " + theMessage);
+    }
+    if (Config.commandsLogConsole())
+      log(level, theMessage); 
+  }
 
-	public void logAll(String thePlayer, String theCommand, LogType theType, Level level) {
-		String theMessage = thePlayer + ": /signedit " + ChatColor.stripColor(theCommand);
+  private void logFile(String data) {
+    try {
+      openFileOutput();
+      this.fileOut.write(data);
+      this.fileOut.newLine();
+      this.fileOut.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
-		if(theType.equals(LogType.PLAYERCOMMAND))
-			theMessage = plugin.localization.get("playerCommand") + " " + thePlayer + ": /signedit " + theCommand;
-		else if(theType.equals(LogType.SIGNCHANGE)) 
-			theMessage = plugin.localization.get("signChange") + " " + thePlayer + theCommand; 
+  private void openFileOutput() {
+    try {
+      this.logFile = new File(this.plugin.getDataFolder(), Config.logName());
+      if (!this.logFile.exists()) {
+        this.logFile.createNewFile();
+      }
+      this.fileOut = new BufferedWriter(new FileWriter(this.plugin.getDataFolder() + System.getProperty("file.separator") + Config.logName(), true));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 
-		if(Config.commandsLogFile())
-			logFile("[" + dateFormat.format(new Date()) + "] " + theMessage);
+  public void info(String msg) {
+    this.log.info(msg);
+  }
 
-		if(Config.commandsLogConsole())
-			log(level, theMessage);
-	}
-	private void logFile(String data) {
-		try {
-			openFileOutput();
-			fileOut.write(ChatColor.stripColor(data));
-			fileOut.newLine();
-			fileOut.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	private void openFileOutput() {
-		try	{
-			logFile = new File(plugin.getDataFolder(), Config.logName());
-			if(!logFile.exists()){
-				logFile.createNewFile();
-			}	
-			fileOut = new BufferedWriter(new FileWriter(plugin.getDataFolder() + System.getProperty("file.separator") + Config.logName(), true));
-		} catch (IOException e){
-			e.printStackTrace();
-		}
-	}
+  public void warning(String msg) {
+    this.log.warning(msg);
+  }
 
-	public void info(String msg) {
-		log.info(ChatColor.stripColor(msg));
-	}
+  public void severe(String msg) {
+    this.log.severe(msg);
+  }
 
-	public void warning(String msg) {
-		log.warning(ChatColor.stripColor(msg));
-	}
-
-	public void severe(String msg) {
-		log.severe(ChatColor.stripColor(msg));
-	}	
-	
-	public void log(Level level, String msg) {
-		log.log(level, ChatColor.stripColor(msg));
-	}
-	
+  public void log(Level level, String msg) {
+    this.log.log(level, msg);
+  }
 }

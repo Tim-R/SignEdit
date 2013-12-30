@@ -9,11 +9,13 @@ signedit:
     commands:
         logtofile: false
         logtoconsole: true  
-        
-    notifyversion: true 
     
     colorsonplace: 
         enabled: true
         usepermission: false
         
     locale: enUS
+
+    metrics: true
+    
+    fireBlockBreakPlace: true
