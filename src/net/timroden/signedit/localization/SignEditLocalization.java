@@ -9,7 +9,6 @@ import net.timroden.signedit.SignEdit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
-
 public class SignEditLocalization {
 	private SignEdit plugin;
 

@@ -1,6 +1,5 @@
 package net.timroden.signedit.data;
 
-public enum LogType
-{
+public enum LogType {
   PLAYERCOMMAND, SIGNCHANGE;
 }

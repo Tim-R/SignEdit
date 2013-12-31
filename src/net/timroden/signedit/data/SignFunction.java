@@ -1,6 +1,5 @@
 package net.timroden.signedit.data;
 
-public enum SignFunction
-{
+public enum SignFunction {
   EDIT, COPY, PASTE, COPYPERSIST, PASTEPERSIST;
 }
