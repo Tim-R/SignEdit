@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -63,7 +64,8 @@ public class SignEditUtils {
 				return true;
 			}
 
-			BlockPlaceEvent p = new BlockPlaceEvent(theBlock, null, theBlock, null, thePlayer, false);
+			BlockPlaceEvent p = new BlockPlaceEvent(theBlock, theBlock.getState(), theBlock, null, thePlayer, true);
+			
 			this.plugin.pluginMan.callEvent(p);
 			
 			if(p.isCancelled()) {

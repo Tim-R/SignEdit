@@ -1,5 +1,5 @@
 name: SignEdit
-version: 3.3.4
+version: 3.3.6
 description: Ever made a mistake on a sign, and not wanted to take the sign down to fix it? Now you don't have to!
 author: Timroden
 authors: [ThundrRok, Cyprias]
@@ -8,27 +8,28 @@ main: net.timroden.signedit.SignEdit
 database: false
 
 commands:
-    signedit:
-        description: Allows you to edit a sign
+  signedit:
+    description: Allows you to edit a sign
+    aliases: [se]
 permissions:
-    signedit.edit:
-        description: Allows you to use /signedit
-        default: false
-    signedit.colorsonplace:
-        description: Allows users to add colours to signs when placed
-        default: false       
-    signedit.override:
-        description: Allows users to override protections.
-        default: op
-        children:
-            signedit.edit: true
-            signedit.colorsonplace: true
-            signedit.admin: true
-    signedit.admin:
-        description: Allows you to admin SignEdit
-        default: op
-    signedit.notify:
-        description: Notifies anyone with this when a SignEdit update is available
-        default: op     
-        children: 
-            signedit.edit: true
+  signedit.edit:
+    description: Allows you to use /signedit
+    default: false
+  signedit.colorsonplace:
+    description: Allows users to add colours to signs when placed
+    default: false       
+  signedit.override:
+    description: Allows users to override protections.
+    default: op
+    children:
+      signedit.edit: true
+      signedit.colorsonplace: true
+      signedit.admin: true
+  signedit.admin:
+    description: Allows you to admin SignEdit
+    default: op
+  signedit.notify:
+    description: Notifies anyone with this when a SignEdit update is available
+    default: op     
+    children: 
+      signedit.edit: true
