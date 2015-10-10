@@ -62,6 +62,12 @@ public class SignEditPlayerListener implements Listener {
 			if (this.utils.shouldCancel(player)) {
 				event.setCancelled(true);
 			}
+			for(String ignoredFirstLine : Config.getBlockedSigns())
+				if(ignoredFirstLine.equalsIgnoreCase(sign.getLine(0))){
+					player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("editionBlocked"));
+					return;
+				}
+			
 			String[] lines = dataPack.getLines();
 
 			if (this.utils.throwSignChange(block, player, sign.getLines()).booleanValue()) {
@@ -97,6 +103,12 @@ public class SignEditPlayerListener implements Listener {
 			if (this.utils.shouldCancel(player)) {
 				event.setCancelled(true);
 			}
+			for(String ignoredFirstLine : Config.getBlockedSigns())
+				if(ignoredFirstLine.equalsIgnoreCase(sign.getLine(0))){
+					player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("editionBlocked"));
+					return;
+				}
+			
 			String[] lines = dataPack.getLines();
 
 			if (this.utils.throwSignChange(block, player, sign.getLines()).booleanValue()) {
@@ -114,6 +126,12 @@ public class SignEditPlayerListener implements Listener {
 			if (this.utils.shouldCancel(player)) {
 				event.setCancelled(true);
 			}
+			for(String ignoredFirstLine : Config.getBlockedSigns())
+				if(ignoredFirstLine.equalsIgnoreCase(sign.getLine(0))){
+					player.sendMessage(this.plugin.chatPrefix + this.plugin.localization.get("editionBlocked"));
+					return;
+				}
+			
 			int line = dataPack.getLineNum();
 			String originalLine = sign.getLine(line);
 

@@ -1,5 +1,7 @@
 package net.timroden.signedit;
 
+import java.util.List;
+
 import org.bukkit.configuration.Configuration;
 import org.bukkit.event.block.Action;
 
@@ -18,6 +20,7 @@ public class Config {
 	private static String logName;
 	private static String locale;
 	private static boolean fireBlockBreakPlace;
+	private static List<String> blockedSigns;
 
 	public Config(SignEdit plugin) {
 		this.plugin = plugin;
@@ -50,6 +53,7 @@ public class Config {
 
 		metrics = config.getBoolean("signedit.metrics");
 		fireBlockBreakPlace = config.getBoolean("signedit.fireBlockBreakPlace");
+		blockedSigns = config.getStringList("signedit.blockIfFirstLineEquals");
 
 		if (invertMouse)
 			clickAction = Action.RIGHT_CLICK_BLOCK;
@@ -108,5 +112,9 @@ public class Config {
 	public String clickActionStr() {
 		return invertMouse ? this.plugin.localization.get("clickRight")
 				: this.plugin.localization.get("clickLeft");
+	}
+
+	public static List<String> getBlockedSigns() {
+		return blockedSigns;
 	}
 }
