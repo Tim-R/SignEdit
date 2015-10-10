@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>SignEdit</groupId>
   <artifactId>SignEdit</artifactId>
-  <version>3.3.4</version>
+  <version>3.4</version>
   <name>SignEdit</name>
   <description>Edit signs in Minecraft.</description>
   <build>
@@ -18,17 +18,19 @@
       </plugin>
     </plugins>
   </build>
-  <dependencies>
-  	<dependency>
-  		<groupId>org.bukkit</groupId>
-  		<artifactId>craftbukkit</artifactId>
-  		<version>1.6.4-R0.1-SNAPSHOT</version>
-  	</dependency>
-  </dependencies>
-    <repositories>
-        <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
-        </repository>
-    </repositories>
+  <repositories>
+		<repository>
+			<id>bukkit-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
+	<dependencies>
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>bukkit</artifactId>
+			<version>1.8.8-R0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
 </project>

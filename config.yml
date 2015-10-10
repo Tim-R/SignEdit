@@ -19,3 +19,7 @@ signedit:
     metrics: true
     
     fireBlockBreakPlace: true
+    
+    blockIfFirstLineEquals:
+      - '[Private]'
+      - '[QuickShop]'
